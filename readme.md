@@ -7,7 +7,7 @@ docker-compose version 1.29.2, build 5becea4c
 ```
 
 ## # 2. airflow docker-compose 다운로드
-```
+```bash
 # quick start: yaml 다운로드
 $ curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.2.2/docker-compose.yaml'
 
