@@ -466,6 +466,7 @@ $ docker exec -u airflow airflow-worker2 pip3 install -r /opt/airflow/repository
 
 ```
 
-![airflow](.img/airflow_8008.png)
+실제 로컬에서 구동한 airflow
+![airflow](img/airflow_8080.png)
 
 
