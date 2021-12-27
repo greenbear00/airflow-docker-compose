@@ -432,7 +432,10 @@ airflow-init을 수행
 ```
 # 초기 셋팅 
 $ mkdir dags logs plugins
-$ echo -e "AIRFLOW_UID=$(id -u)\nAIRFLOW_GID=0" > .env
+
+# 버전이 올라가면서 airflow_GID는 사라짐 (오류 나와도 무시하면 됨)
+#$ echo -e "AIRFLOW_UID=$(id -u)\nAIRFLOW_GID=0" > .env
+$ echo -e "AIRFLOW_UID=$(id -u)" > .env
 
 $ docker-compose up airflow-init
 airflow-cluster-test-airflow-init-1  | [2021-12-27 04:18:06,822] {manager.py:214} INFO - Added user airflow
