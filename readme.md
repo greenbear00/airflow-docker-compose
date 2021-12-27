@@ -448,6 +448,16 @@ $ docker-compose up -d
 
 # 상태확인
 $ docker-compose ps
+NAME                             COMMAND                  SERVICE             STATUS              PORTS
+airflow-cluster_airflow-init_1   "/bin/bash -c 'funct…"   airflow-init        exited (0)
+airflow-scheduler                "/usr/bin/dumb-init …"   airflow-scheduler   running (healthy)   8080/tcp
+airflow-triggerer                "/usr/bin/dumb-init …"   airflow-triggerer   running (healthy)   8080/tcp
+airflow-webserver                "/usr/bin/dumb-init …"   airflow-webserver   running (healthy)   0.0.0.0:8080->8080/tcp
+airflow-worker1                  "/usr/bin/dumb-init …"   airflow-worker1     running (healthy)   0.0.0.0:50001->8793/tcp
+airflow-worker2                  "/usr/bin/dumb-init …"   airflow-worker2     running (healthy)   0.0.0.0:50002->8793/tcp
+flower                           "/usr/bin/dumb-init …"   flower              running (healthy)   0.0.0.0:5555->5555/tcp
+mysql                            "docker-entrypoint.s…"   mysql               running (healthy)   33060/tcp
+redis                            "docker-entrypoint.s…"   redis               running (healthy)   6379/tcp
 ```
 
 ## airflow 확인하기
