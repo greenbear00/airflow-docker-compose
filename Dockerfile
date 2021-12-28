@@ -15,13 +15,13 @@ RUN source ~/.bashrc
 
 ########################################################################
 # by airflow user
-# - install jupyter
+# - install jupyter (-> $ jupyter notebook list하면 기본 airflow로 나옴)
 # - apply alias ll
 ########################################################################
 USER airflow
 
-RUN pip3 install -U jupyter-core --user
-RUN pip3 install -U jupyter --user
+RUN pip3 install -U jupyter-core 
+RUN pip3 install -U jupyter 
 RUN chmod -R 775 /home/airflow/.local/share/jupyter
 
 RUN echo "alias ll='ls --color=auto -alF'" >> ~/.bashrc

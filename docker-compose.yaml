@@ -161,7 +161,7 @@ services:
 
   airflow-jupyter:
     <<: *airflow-common
-    container_name: airflow_jupyter
+    container_name: airflow-jupyter
     command: bash -cx "jupyter notebook --ip 0.0.0.0  --NotebookApp.token='airflow' --no-browser"
     ports:
       - 8888:8888

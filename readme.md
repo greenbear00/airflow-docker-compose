@@ -479,6 +479,15 @@ $ docker exec -u airflow airflow-worker2 pip3 install -r /opt/airflow/repository
 
 ```
 
-
 실제 로컬에서 구동한 airflow
 ![airflow](img/airflow_8080.png)
+
+
+## jupyter
+실제 http://localhost:8888 로 접속하고 token에 'airflow'를 입력하면 접속 가능
+확인방법
+```
+$ docker exec -u airflow airflow-jupyter bash
+$ jupyter notebook list
+
+```
