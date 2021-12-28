@@ -19,10 +19,16 @@ RUN source ~/.bashrc
 # - apply alias ll
 ########################################################################
 USER airflow
-RUN pip3 install jupyter
+
+RUN pip3 install -U jupyter-core --user
+RUN pip3 install -U jupyter --user
+RUN chmod -R 775 /home/airflow/.local/share/jupyter
+
 RUN echo "alias ll='ls --color=auto -alF'" >> ~/.bashrc
 RUN source ~/.bashrc
+
 WORKDIR /opt/airflow/script
+
 
 
 ########################################################################

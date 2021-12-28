@@ -17,7 +17,7 @@ $ docker run --rm "debian:buster-slim" bash -c 'numfmt --to iec $(echo $(($(getc
 
 ## 3. base 이미지인 airflow 2.2.2 버전 수정
 ### 3.1 Dockerfile
-apache/airflow:2.2.2를 기본으로 하며, docker-compose에 기존 postgres 대신 mysql로 변경
+apache/airflow:2.2.2를 기본으로 하며, docker-compose에 기존 postgres 대신 **mysql로 변경**
 그와 관련된 패키지 install 포함
 
 ```
@@ -466,3 +466,4 @@ $ docker exec -u airflow airflow-worker2 pip3 install -r /opt/airflow/repository
 
 ```
 
+![airflow](img/airflow_8080.png)
