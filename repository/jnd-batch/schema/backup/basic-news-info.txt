@@ -1,0 +1,75 @@
+POST /_aliases
+{
+   "actions":[
+      {
+         "add":{
+            "index":"basic-news-info-2021.10.21",
+            "alias":"basic-news-info",
+            "is_write_index":true
+         }
+      }
+   ]
+}
+
+PUT /basic-news-info-2021.10.21
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0
+  },
+  "mappings": {
+    "properties": {
+      "news_id": {
+        "type": "keyword"
+      },
+      "news_name": {
+        "type": "keyword"
+      },
+      "used_yn": {
+      	"type": "keyword"
+      },
+      "source": {
+      	"properties": {
+      		"code": {
+      			"type": "keyword"
+      		},
+      		"name": {
+      			"type": "keyword"
+      		}
+      	}
+      },
+      "section": {
+        "properties": {
+          "id": {
+            "type": "keyword"
+          },
+          "name": {
+            "type": "keyword"
+          }
+        }
+      },
+      "service_date": {
+        "type": "date"
+      },
+      "modified_date": {
+      	"type": "date"
+      },
+      "reporter": {
+        "properties": {
+        	"no": {
+        		"type": "keyword"
+        	},
+        	"name": {
+						"type": "keyword"
+					},
+        	"depart_no": {
+						"type": "keyword"
+					},
+        	"depart_name": {
+						"type": "keyword"
+					}
+        }
+      }
+    }
+  }
+}

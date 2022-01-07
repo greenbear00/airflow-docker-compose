@@ -1,0 +1,140 @@
+PUT /_template/jtbcnews_raw_1
+{
+  "order" : 0,
+  "index_patterns" : [
+    "jtbcnews-raw*"
+  ],
+  "settings" : {
+    "analysis": {
+      "normalizer": {
+        "news_id_normalizer": {
+          "type": "custom",
+          "char_filter": [],
+          "filter": ["uppercase"]
+        }
+      }
+    },
+    "index" : {
+      "number_of_shards" : "1",
+      "number_of_replicas" : "0"
+    }
+  },
+  "mappings" : {
+    "_routing" : {
+      "required" : false
+    },
+    "numeric_detection" : true,
+    "dynamic_date_formats" : [
+      "strict_date_optional_time",
+      "yyyy/MM/dd HH:mm:ss Z||yyyy/MM/dd Z"
+    ],
+    "dynamic" : true,
+    "_source" : {
+      "excludes" : [ ],
+      "includes" : [ ],
+      "enabled" : true
+    },
+    "dynamic_templates" : [ ],
+    "date_detection" : true,
+    "properties" : {
+      "referer" : {
+        "type" : "keyword"
+      },
+      "parm_member_type" : {
+        "type" : "keyword"
+      },
+      "agent" : {
+        "type" : "keyword"
+      },
+      "code" : {
+        "type" : "keyword"
+      },
+      "reqbody" : {
+        "type" : "text"
+      },
+      "ua_browser_version" : {
+        "type" : "keyword"
+      },
+      "remote" : {
+        "type" : "keyword"
+      },
+      "path" : {
+        "type" : "keyword"
+      },
+      "hostname" : {
+        "type" : "keyword"
+      },
+      "ua_os_family" : {
+        "type" : "keyword"
+      },
+      "ua_device" : {
+        "type" : "keyword"
+      },
+      "ua_browser_family" : {
+        "type" : "keyword"
+      },
+      "tag" : {
+        "type" : "keyword"
+      },
+      "timestamp" : {
+        "type" : "date"
+      },
+      "method" : {
+        "type" : "keyword"
+      },
+      "reqtime" : {
+        "format" : "strict_date_optional_time||epoch_millis||dd/MMM/yyyy:HH:mm:ss Z",
+        "index" : true,
+        "ignore_malformed" : false,
+        "store" : false,
+        "type" : "date",
+        "doc_values" : true
+      },
+      "location": {
+        "type": "geo_point",
+        "null_value": null
+      },
+      "parm_member_id" : {
+        "type" : "keyword"
+      },
+      "es_index_name" : {
+        "type" : "keyword"
+      },
+      "parm_referer" : {
+        "type" : "keyword"
+      },
+      "action_name" : {
+        "type" : "keyword"
+      },
+      "action_type" : {
+        "type" : "keyword"
+      },
+      "news_id" : {
+        "type" : "keyword",
+        "normalizer": "news_id_normalizer"
+      },
+      "news_nm" : {
+        "type" : "keyword"
+      },
+      "parm_origin": {
+        "type" : "keyword"
+      },
+      "size" : {
+        "type" : "keyword"
+      },
+      "ua_os_version" : {
+        "type" : "keyword"
+      },
+      "parm_current_path" : {
+        "type" : "keyword"
+      },
+      "xforward" : {
+        "type" : "keyword"
+      },
+      "parm_user_id" : {
+        "type" : "keyword"
+      }
+    }
+  },
+  "aliases" : { }
+}

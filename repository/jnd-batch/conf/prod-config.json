@@ -1,0 +1,24 @@
+{
+  "elastic": {
+    "hosts": "192.168.171.168:9200",
+    "username": "elastic",
+    "password": "pQJYrTf5V8sp5zysJrbg"
+  },
+  "kibana-api": {
+    "url": "https://jnd.jtbc.co.kr:5601",
+    "username": "elastic",
+    "password": "pQJYrTf5V8sp5zysJrbg"
+  },
+  "jtbc-news-db": {
+    "server": "192.168.171.112",
+    "user": "USER_JTBC_DEV",
+    "password": "tk00karksp!@",
+    "database": "DB_JTBC_NEWS"
+  },
+  "jtbc-tv-db": {
+    "server": "192.168.171.112",
+    "user": "USER_JTBC_DEV",
+    "password": "tk00karksp!@",
+    "database": "DB_JTBC_CON"
+  }
+}

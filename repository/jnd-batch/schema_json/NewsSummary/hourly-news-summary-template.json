@@ -1,0 +1,161 @@
+{
+  "index_patterns": [
+      "hourly-news-summary", "hourly-news-summary-*"
+  ],
+  "template": {
+      "settings": {
+          "number_of_shards": null
+      },
+      "mappings": {
+          "_source": {
+              "enabled": true
+          },
+          "properties": {
+            "comment_total" : {
+              "type" : "long"
+            },
+            "contents_div" : {
+              "type" : "keyword"
+            },
+            "jtbc" : {
+              "properties" : {
+                "app_view" : {
+                  "type" : "integer"
+                },
+                "comment" : {
+                  "type" : "integer"
+                },
+                "mobile_view" : {
+                  "type" : "integer"
+                },
+                "pc_view" : {
+                  "type" : "integer"
+                },
+                "reaction" : {
+                  "type" : "integer"
+                },
+                "view" : {
+                  "type" : "integer"
+                }
+              }
+            },
+            "kakao" : {
+              "properties" : {
+                "comment" : {
+                  "type" : "long"
+                },
+                "mobile_view" : {
+                  "type" : "integer"
+                },
+                "pc_view" : {
+                  "type" : "integer"
+                },
+                "reaction" : {
+                  "type" : "long"
+                },
+                "view" : {
+                  "type" : "long"
+                }
+              }
+            },
+            "naver" : {
+              "properties" : {
+                "click" : {
+                  "type" : "long"
+                },
+                "comment" : {
+                  "type" : "long"
+                },
+                "mobile_view" : {
+                  "type" : "integer"
+                },
+                "pc_view" : {
+                  "type" : "integer"
+                },
+                "reaction" : {
+                  "type" : "long"
+                },
+                "view" : {
+                  "type" : "long"
+                }
+              }
+            },
+            "news_id" : {
+              "type" : "keyword"
+            },
+            "news_name" : {
+              "type" : "keyword"
+            },
+            "prog_id" : {
+              "type" : "keyword"
+            },
+            "prog_name" : {
+              "type" : "keyword"
+            },
+            "reaction_total" : {
+              "type" : "long"
+            },
+            "reg_date" : {
+              "type" : "date"
+            },
+            "reporter" : {
+              "properties" : {
+                "depart_name" : {
+                  "type" : "keyword"
+                },
+                "depart_no" : {
+                  "type" : "keyword"
+                },
+                "name" : {
+                  "type" : "keyword"
+                },
+                "no" : {
+                  "type" : "keyword"
+                }
+              }
+            },
+            "section" : {
+              "properties" : {
+                "id" : {
+                  "type" : "keyword"
+                },
+                "name" : {
+                  "type" : "keyword"
+                }
+              }
+            },
+            "service_date" : {
+              "type" : "date"
+            },
+            "source" : {
+              "properties" : {
+                "code" : {
+                  "type" : "keyword"
+                },
+                "id" : {
+                  "type" : "text",
+                  "fields" : {
+                    "keyword" : {
+                      "type" : "keyword",
+                      "ignore_above" : 256
+                    }
+                  }
+                },
+                "name" : {
+                  "type" : "keyword"
+                }
+              }
+            },
+            "view_total" : {
+              "type" : "long"
+            },
+            "update_date" : {
+              "type" : "date"
+            }
+          }
+      },
+      "aliases": {
+
+      }
+  }
+}

@@ -1,0 +1,2364 @@
+POST /daily-news-summary/_update_by_query
+{
+  "query": {
+    "match": {
+      "_id": "20210904_NB11989241"
+    }
+  },
+  "script": {
+    "source": "ctx._source.reporter=params.reporter",
+    "params": {
+      "reporter": [
+        {
+          "no" : "522",
+          "name" : "한류경",
+          "depart_no" : "7",
+          "depart_name": "스포츠문화부"
+        },
+        {
+          "no" : "319",
+          "name" :  "윤샘이나",
+          "depart_no" : "2",
+          "depart_name": "국제외교안보부"
+        }
+      ]
+    },
+    "lang": "painless"
+  }
+}
+
+POST _reindex
+{
+    "source": {
+        "index": "heynews-nginx-2020.10.21"
+    },
+    "dest": {
+        "index": "heynews-nginx-2020.10.21-back"
+    }
+}
+
+POST /_aliases
+{
+   "actions":[
+      {
+         "add":{
+            "index":"hourly-news-summary-2021.08.30",
+            "alias":"hourly-news-summary",
+            "is_write_index":true
+         }
+      }
+   ]
+}
+
+DELETE hourly-news-summary-2021.08.24/_alias/hourly-news-summary
+DELETE daily-news-summary-2021.08.24/_alias/daily-news-summary
+
+GET /hourly-news-summary/_search
+{
+  "sort": [
+    {
+      "reg_date": {
+        "order": "desc"
+      }
+    }
+  ]
+}
+
+GET /jtbcnews-raw-2021.08*/_count
+{
+  "query": {
+    "range": {
+      "reqtime": {
+        "gte": "2021-08-25T00:00:00+09:00",
+        "lte": "2021-08-25T23:59:59+09:00"
+      }
+    }
+  }
+}
+
+GET /naver-news-day-stat/_search
+{
+  "size": 0,
+  "_source": false,
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "reg_date": {
+              "gte": "2021-08-24T00:00:00+09:00",
+              "lte": "2021-08-24T23:59:59+09:00"
+            }
+          }
+        },
+        {
+          "terms": {
+            "news_id": [
+              "NB12021101",
+              "NB12021027"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "news_id": {
+      "terms": {
+        "field": "news_id",
+        "size": 500
+      },
+      "aggs": {
+        "cumul": {
+          "top_hits": {
+            "size": 1,
+            "_source": {
+              "includes": ["total_cum", "reaction_cum", "comment_cum"]
+            },
+            "sort": [
+              {
+                "reg_date": "desc"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}
+
+GET /naver-news-day-stat/_search
+{
+  "size": 0,
+  "_source": false,
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "reg_date": {
+              "gte": "2021-08-24T00:00:00+09:00",
+              "lte": "2021-08-24T23:59:59+09:00"
+            }
+          }
+        },
+        {
+          "terms": {
+            "news_id": [
+              "NB12021101",
+              "NB12021027"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "news_id": {
+      "terms": {
+        "field": "news_id",
+        "size": 500
+      },
+      "aggs": {
+        "cumulative": {
+          "top_hits": {
+            "size": 1,
+            "_source": {
+              "includes": ["total_cum", "reaction_cum", "comment_cum"]
+            },
+            "sort": [
+              {
+                "reg_date": "desc"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}
+
+GET naver-news-day-stat/_search
+
+GET /daily-news-summary/_search
+{
+  "sort": [
+    {
+      "jtbc.view": "desc"
+    }]
+}
+
+GET jtbcnews-raw-2021.08.24/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "reqtime": {
+              "gte": "2021-08-24T00:00:00+09:00",
+              "lte": "2021-08-24T23:59:59+09:00"
+            }
+          }
+        },
+        {
+          "match": {
+            "news_id": "NB10010777"
+          }
+        }
+      ]
+    }
+  }
+}
+
+GET daily-news-summary/_count
+{
+  "query": {
+    "range": {
+      "reg_date": {
+        "gte": "2021-08-24T00:00:00+09:00",
+        "lte": "2021-08-24T23:59:59+09:00"
+      }
+    }
+  }
+}
+
+GET hourly-news-summary/_search
+{
+  "size": 0,
+  "query": {
+    "range": {
+      "reg_date": {
+        "gte": "2021-08-24T00:00:00+09:00",
+        "lte": "2021-08-24T23:59:59+09:00"
+      }
+    }
+  },
+  "aggs": {
+    "news_id": {
+      "terms": {
+        "field": "news_id",
+        "size": 999999999
+      }
+    }
+  }
+}
+
+GET hourly-news-summary/_search
+
+GET /hourly-news-summary/_search?size=0
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "reg_date": {
+              "gte": "2021-08-23T00:00:00+09:00",
+              "lte": "2021-08-23T23:59:59+09:00"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "news_id": {
+      "terms": {
+        "field": "news_id",
+        "size": 999999999
+      },
+      "aggs": {
+        "news_nm": {
+          "top_hits": {
+            "size": 1,
+            "_source": {
+              "includes": ["news_name"]
+            }
+          }
+        },
+        "jtbc.pc_view": {
+          "sum": {
+            "field": "jtbc.pc_view"
+          }
+        },
+        "jtbc.mobile_view": {
+          "sum": {
+            "field": "jtbc.mobile_view"
+          }
+        },
+        "jtbc.app_view": {
+          "sum": {
+            "field": "jtbc.app_view"
+          }
+        },
+        "jtbc.view": {
+          "sum": {
+            "field": "jtbc.view"
+          }
+        },
+        "jtbc.comment": {
+          "sum": {
+            "field": "jtbc.comment"
+          }
+        },
+        "jtbc.reaction": {
+          "sum": {
+            "field": "jtbc.reaction"
+          }
+        },
+        "naver.pc_view": {
+          "sum": {
+            "field": "naver.pc_view"
+          }
+        },
+        "naver.mobile_view": {
+          "sum": {
+            "field": "naver.mobile_view"
+          }
+        },
+        "naver.view": {
+          "sum": {
+            "field": "naver.view"
+          }
+        },
+        "kakao.pc_view": {
+          "sum": {
+            "field": "kakao.pc_view"
+          }
+        },
+        "kakao.mobile_view": {
+          "sum": {
+            "field": "kakao.mobile_view"
+          }
+        },
+        "kakao.view": {
+          "sum": {
+            "field": "kakao.view"
+          }
+        },
+        "kakao.comment": {
+          "sum": {
+            "field": "kakao.comment"
+          }
+        },
+        "kakao.reaction": {
+          "sum": {
+            "field": "kakao.reaction"
+          }
+        }
+      }
+    }
+  }
+}
+
+  "aggs": {
+    "my_sum": {
+      "scripted_metric": {
+        "init_script": "state.elements = []",
+        "map_script": "state.elements.add(doc['fieldA'].size()>0 ? doc.fieldA.value : 0);state.elements.add(doc['fieldB'].size()>0 ? doc.fieldB.value : 0)",
+        "combine_script": "long sum = 0; for (t in state.elements) { sum += t } return sum",
+        "reduce_script": "long sum = 0; for (t in states) { sum += t } return sum"
+      }
+    }
+
+GET /hourly-news-summary/_search?size=0
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "reg_date": {
+              "gte": "2021-08-23T00:00:00+09:00",
+              "lte": "2021-08-23T23:59:59+09:00"
+            }
+          }
+        },
+        {
+          "match": {
+            "news_id": "NB12020910"
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "pc_view": {
+      "sum": {
+        "field": "jtbc.pc_view"
+      }
+    },
+    "mobile_view": {
+      "sum": {
+        "field": "jtbc.mobile_view"
+      }
+    },
+    "app_view": {
+      "sum": {
+        "field": "jtbc.app_view"
+      }
+    }
+  }
+}
+
+GET /daily-news-summary/_search
+{
+  "query": {
+    "match": {
+      "news_id": "NB12020910"
+    }
+  }
+}
+
+GET /naver-news-day-stat/_search
+{
+  "sort": [
+    {
+      "reg_date": {
+        "order": "desc"
+      }
+    }
+    ]
+}
+
+GET daily-news-summary/_search
+{
+  "size": 0,
+  "aggs": {
+    "total": {
+      "sum": {
+        "field": "jtbc.view"
+      }
+    }
+  }
+}
+
+GET daum-news-hour-stat/_search
+{
+  "sort": [
+    {
+      "reg_date": "desc"
+    }]
+}
+
+GET /jtbcnews-raw-2021.08.23/_count
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "reqtime": {
+              "gte": "2021-08-23T15:00:00+09:00",
+              "lte": "2021-08-23T15:59:59+09:00"
+            }
+          }
+        },
+        {
+          "match": {
+            "action_name": "viewarticle"
+          }
+        },
+        {
+          "match": {
+            "news_id": "NB12020981"
+          }
+        }
+      ]
+    }
+  }
+}
+
+GET /jtbcnews-raw-2021.08.23/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "reqtime": {
+              "gte": "2021-08-23T15:00:00+09:00",
+              "lte": "2021-08-23T15:59:59+09:00"
+            }
+          }
+        },
+        {
+          "match": {
+            "action_name": "comment"
+          }
+        }
+        ]
+    }
+  }
+}
+
+GET naver-news-hour-stat/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "reg_date": {
+              "gte": "2021-08-23T14:00:00+09:00",
+              "lte": "2021-08-23T14:59:59+09:00"
+            }
+          }
+        }
+        ]
+    }
+  }
+}
+# 2021082314_NB12008446
+
+GET naver-news-hour-stat/_search
+{
+	"size": 0,
+	"query": {
+		"bool": {
+			"must": [
+				{
+					"range": {
+						"reg_date": {
+              "gte": "2021-08-23T14:00:00+09:00",
+              "lte": "2021-08-23T14:59:59+09:00"
+						}
+					}
+				},
+        {
+          "match": {
+            "news_id": "NB12020954"
+          }
+        }
+			],
+			"must_not": [
+				{
+					"match": {
+						"news_id": ""
+					}
+				},
+				{
+				  "match": {
+				    "news_nm": ""
+				  }
+				}
+			]
+		}
+	},
+	"aggs": {
+		"by_news_id": {
+			"terms": {
+				"field": "news_id",
+				"size": 999999999
+			},
+			"aggs": {
+				"info": {
+					"top_hits": {
+						"size": 1,
+						"_source": {
+							"includes": ["_id","news_nm", "pc_inc", "mobile_inc", "reaction_inc", "comment_inc", "total_inc"]
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+
+GET daum-news-hour-stat/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "reg_date": {
+              "gte": "2021-08-23T14:00:00+09:00",
+              "lte": "2021-08-23T14:59:59+09:00"
+            }
+          }
+        },
+        {
+          "match": {
+            "news_id": "NB12020909"
+          }
+        }
+        ]
+    }
+  }
+}
+GET naver-news-hour-stat/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "reg_date": {
+              "gte": "2021-08-23T14:00:00+09:00",
+              "lte": "2021-08-23T14:59:59+09:00"
+            }
+          }
+        },
+        {
+          "match": {
+            "news_id": "GET /daum-news-day-stat/_count"
+          }
+        }
+        ]
+    }
+  }
+}
+
+{
+  "query": {
+    "range": {
+      "reg_date": {
+        "lt": "2021-08-24T00:00:00+09:00"
+      }
+    }
+  }
+}
+
+GET /daum-news-day-stat/_search
+{
+  "query": {
+    "match": {
+      "news_id": "NB12020916"
+    }
+  }
+}
+
+GET /daum-news-day-stat/_search
+{
+  "sort": [
+    {
+      "reg_date": {
+        "order": "desc"
+      }
+    }
+    ]
+}
+
+
+GET /naver-news-hour-stat/_search
+{
+  "query": {
+    "match": {
+      "news_id": "NB12015408"
+    }
+  }
+}
+
+POST /daum-news-day-stat/_update_by_query
+{
+  "script": {
+    "source": "ctx._source['reg_date'] = '2021-08-20T00:00:00+09:00'"
+  },
+  "query": {
+    "range": {
+      "reg_date": {
+        "gte": "2021-08-20T00:00:00+09:00",
+        "lte": "2021-08-20T23:59:59+09:00"
+      }
+    }
+  }
+}
+
+POST /naver-news-day-stat/_delete_by_query
+{
+  "query": {
+    "bool": {
+      "must_not": [
+        {
+          "match": {
+            {
+              ""
+            }
+            "news_id": ""
+          }
+        }
+      ]
+    }
+  }
+}
+
+GET /daily-news-summary/_search
+
+GET /naver-news-hour-stat/_search
+{
+  "query": {
+    "match": {
+      "news_id": "NB12020136"
+    }
+  }
+}
+
+
+GET /daum-news-hour-stat/_search
+{
+  "query": {
+    "match": {
+      "_id": "2021081819_NB12020470"
+    }
+  }
+}
+
+GET /naver-news-hour-stat/_search
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "reg_date": {
+              "gte": "2021-08-18T00:00:00+09:00",
+              "lte": "2021-08-18T23:59:59+09:00"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "news_id": {
+      "terms": {
+        "field": "news_id",
+        "size": 999999999
+      },
+      "aggs": {
+        "pc_inc": {
+          "sum": {
+            "field": "pc_inc"
+          }
+        },
+        "pc_cum": {
+          "top_hits": {
+            "size": 1,
+            "sort": [
+              {
+                "reg_date": {
+                  "order": "desc"
+                }
+              }
+            ],
+            "_source": {
+              "includes": "pc_cum"
+            }
+          }
+        },
+        "mobile_inc": {
+          "sum": {
+            "field": "mobile_inc"
+          }
+        },
+        "mobile_cum": {
+          "top_hits": {
+            "size": 1,
+            "sort": [
+              {
+                "reg_date": {
+                  "order": "desc"
+                }
+              }
+            ],
+            "_source": {
+              "includes": "mobile_cum"
+            }
+          }
+        },
+        "comment_inc": {
+          "sum": {
+            "field": "comment_inc"
+          }
+        },
+        "comment_cum": {
+          "top_hits": {
+            "size": 1,
+            "sort": [
+              {
+                "reg_date": {
+                  "order": "desc"
+                }
+              }
+            ],
+            "_source": {
+              "includes": "comment_cum"
+            }
+          }
+        },
+        "reaction_inc": {
+          "sum": {
+            "field": "reaction_inc"
+          }
+        },
+        "reaction_cum": {
+          "top_hits": {
+            "size": 1,
+            "sort": [
+              {
+                "reg_date": {
+                  "order": "desc"
+                }
+              }
+            ],
+            "_source": {
+              "includes": "reaction_cum"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+#"2021-08-21T00:00:00"
+
+
+GET /daum-news-day-stat/_search
+
+GET /naver-news-day-stat/_search
+{
+  "size": 0,
+  "aggs": {
+    "reg_date": {
+      "terms": {
+        "field": "reg_date",
+        "size": 10
+      }
+    }
+  }
+}
+
+GET /daum-news-day-stat/_search
+{
+  "sort": [
+    {
+      "reg_date": {
+        "order": "desc"
+      }
+    }
+  ]
+}
+
+GET /daily-news-summary/_search
+
+GET /naver-news-day-stat/_search
+{
+  "size": 0,
+	"query": {
+		"bool": {
+			"must": [
+				{
+					"range": {
+						"reg_date": {
+						  "gte": "2021-08-13T00:00:00+09:00",
+						  "lte": "2021-08-13T00:00:00+09:00"
+						}
+					}
+				}
+			],
+			"must_not": [
+				{
+					"term": {
+						"news_id": ""
+					}
+				}
+			]
+		}
+	},
+	"aggs": {
+		"by_news_id": {
+			"terms": {
+				"field": "news_id",
+				"size": 999999999
+			},
+			"aggs": {
+				"news_nm": {
+					"top_hits": {
+						"size": 1,
+						"_source": {
+							"includes": ["news_nm", "pc_inc", "mobile_inc", "reaction_inc", "comment_inc", "total_inc"]
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+GET /naver-news-day-stat/_search
+{
+  "query": {
+    "range": {
+      "reg_date": {
+        "gte": "2021-07-23T00:00:00+09:00",
+        "lte": "2021-07-23T23:59:59+09:00"
+      }
+    }
+  },
+  "_source": ["news_id","comment_cum","reaction_cum"]
+}
+
+GET /jtbcnews-raw-2021.08.17/_count
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "news_id": "nb12020143"
+          }
+        }
+      ]
+    }
+  }
+}
+
+GET /jtbcnews-raw-2021.08.17/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "action_name": "reaction"
+          }
+        },
+        {
+          "match": {
+            "news_id": "nb12020213"
+          }
+        }
+      ]
+    }
+  }
+}
+
+GET /jtbcnews-raw-2021.08.11/_search
+{
+	"query": {
+	  "bool": {
+	    "must": [
+	      {
+      		"term": {
+      			"action_name": {
+      				"value": "viewarticle"
+      			}
+      		}
+	      },
+	      {
+	        "term": {
+	          "news_id": {
+	            "value": ""
+	          }
+	        }
+	      }
+	    ]
+	  }
+	}
+}
+
+GET /jtbcnews-raw-2021.08.11/_search
+{
+	"size": 0,
+	"query": {
+	  "bool": {
+	    "must": [
+	      {
+      		"term": {
+      			"action_name": {
+      				"value": "viewarticle"
+      			}
+      		}
+	      }
+	    ]
+	  }
+	},
+	"aggs": {
+		"by_news_id": {
+			"terms": {
+				"field": "news_id",
+				"size": 999999999
+			},
+			"aggs": {
+			  "news_nm": {
+			    "top_hits": {
+			      "size": 1,
+			      "_source": {
+			        "includes": "news_nm"
+			      }
+			    }
+			  },
+				"by_origin": {
+					"terms": {
+						"field": "parm_origin",
+						"size": 999999999
+					}
+				}
+			}
+		}
+	}
+}
+
+
+
+GET /jtbcnews-raw-2021.08.07/_explain/0
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "news_id": "nb12019110"
+          }
+        },
+        {
+          "match": {
+            "action_name": "uncomment"
+          }
+        }
+      ]
+    }
+  }
+}
+
+GET /jtbcnews-raw-2021.08*/_search
+{
+  "query": {
+    "terms": {
+      "action_name": [
+        "comment",
+        "uncomment"
+      ]
+    }
+  },
+  "_source": false,
+  "size": 0,
+  "aggs": {
+    "news_id": {
+      "terms": {
+        "field": "news_id",
+        "size": 999999999
+      },
+      "aggs": {
+        "comment": {
+          "filter": {"term": {"action_name": "comment"}},
+          "aggs": {
+            "in": {
+              "value_count": {
+                "field": "action_name"
+              }
+            }
+          }
+        },
+        "uncomment": {
+          "filter": {"term": {"action_name": "uncomment"}},
+          "aggs": {
+            "out": {
+              "value_count": {
+                "field": "action_name"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+GET /jtbcnews-raw-2021.*/_search
+{
+  "query": {
+    "terms": {
+      "action_name": [
+        "reaction",
+        "unreaction"
+      ]
+    }
+  },
+  "_source": false,
+  "size": 0,
+  "aggs": {
+    "by_news_id": {
+      "terms": {
+        "field": "news_id",
+        "size": 99999999
+      },
+      "aggs": {
+        "reaction": {
+          "filter": {
+            "term": {"action_name": "reaction"}
+          },
+          "aggs": {
+            "in": {
+              "value_count": {
+                "field": "action_name"
+              }
+            }
+          }
+        },
+        "unreaction": {
+          "filter": {
+            "term": {"action_name": "unreaction"}
+          },
+          "aggs": {
+            "out": {
+              "value_count": {
+                "field": "action_name"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+GET /jtbcnews-raw-2021.*/_search
+{
+  "_source": false,
+  "size": 0,
+  "query": {
+    "terms": {
+      "action_name": [
+        "reaction",
+        "unreaction"
+      ]
+    }
+  },
+  "aggs": {
+    "reaction": {
+      "filter": {
+        "term": {"action_name": "reaction"}
+      },
+      "aggs": {
+        "in": {
+          "value_count": {
+            "field": "action_name"
+          }
+        }
+      }
+    },
+    "unreaction": {
+      "filter": {
+        "term": {"action_name": "unreaction"}
+      },
+      "aggs": {
+        "out": {
+          "value_count": {
+            "field": "action_name"
+          }
+        }
+      }
+    }
+  }
+}
+
+
+GET /jtbcnews-raw-*/_search
+{
+			"query": {
+				"range": {
+					"reqtime": {
+						"gte": "2021-07-23T00:00:00+09:00",
+						"lte": "2021-07-23T23:59:59+09:00"
+					}
+				}
+			},
+			"aggs": {
+				"news_id": {
+					"terms": {
+						"field": "news_id",
+						"size": 9999999
+					}
+				}
+			}
+		}
+
+GET _sql?format=txt
+{
+  "query": """
+  SELECT news_id, news_nm, count(news_id) AS cnt
+  FROM "jtbcnews-raw-*"
+  WHERE reqtime between '2021-07-23T00:00:00+09:00' and '2021-07-23T23:59:59+09:00'
+    and parm_referer like '%naver%'
+  GROUP BY news_id, news_nm
+  ORDER BY cnt DESC
+  LIMIT 10
+  """
+}
+
+GET /jtbcnews-raw-2021.08.04/_search
+
+GET /_sql/translate
+{
+  "query": """select reqtime, news_id, count(*) from "jtbcnews-raw-2021.08.04"
+    where action_name='viewarticle'
+    group by reqtime, news_id
+  """
+}
+
+GET /jtbcnews-raw-2021.08.04/_mapping
+
+GET /jtbcnews-raw-2021.08.04/_search
+{
+  "query": {
+    "exists": {
+      "field": "parm_origin"
+    }
+  }
+}
+
+GET /jtbcnews-raw-2021.07.30/_search
+{
+  "query": {
+    "match": {
+      "news_id": "NB12018034"
+    }
+  }
+}
+
+GET /daily-news-summary/_search
+{
+  "query": {
+    "match": {
+      "news_id": "NB12018034"
+    }
+  }
+}
+
+GET /daily-news-summary/_search
+
+POST /daily-news-summary/_delete_by_query
+{
+  "query": {
+    "match": {
+      "_id": "20210730_NB12018034"
+    }
+  }
+}
+
+#reqtime 필드명이 달라도 인덱스패턴에 timestamp설정함에 따라 시간 조건이 같이 설정된다.
+PUT /daily-news-summary/_doc/20210801_NB12018034
+{
+  "reqtime": "2021-08-01T00:00:00+09:00",
+  "news_id": "NB12018034",
+  "news_nm": "'오진혁 시상대 셀카' 공개되자 \"도쿄올림픽 최고의 사진\"",
+  "naver.view_total": 40,
+  "naver.view_pc": 20,
+  "naver_view_mobile": 20
+}
+
+GET daily-news-summary/_search?size=100
+{
+  "query": {
+    "match": {
+      "news_id": "NB11997057"
+    }
+  }
+}
+
+GET daily-news-summary/_search
+GET daily-news-summary/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "exists": {
+            "field": "jtbc.view_mobile"
+          }
+        },
+        {
+          "exists": {
+            "field": "jtbc.view_total"
+          }
+        }
+      ]
+    }
+  }
+}
+
+GET daily-news-summary/_search
+
+
+PUT /daily-news-summary
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0
+  },
+  "mappings": {
+    "properties": {
+      "reg_date": {
+        "type": "date"
+      },
+      "news_id": {
+        "type": "keyword"
+      },
+      "news_name": {
+        "type": "keyword"
+      },
+      "section": {
+        "properties": {
+          "id": {
+            "type": "keyword"
+          },
+          "name": {
+            "type": "keyword"
+          }
+        }
+      },
+      "service_date": {
+        "type": "date"
+      },
+      "reporter": {
+        "type": "nested"
+      },
+      "jtbc": {
+        "properties": {
+          "pc_view": {
+            "type": "long"
+          },
+          "mobile_view": {
+            "type": "long"
+          },
+          "app_view": {
+            "type": "long"
+          },
+          "reaction": {
+            "type": "long"
+          },
+          "comment": {
+            "type": "long"
+          }
+        }
+      },
+      "naver": {
+        "properties": {
+          "view": {
+            "type": "long"
+          },
+          "reaction": {
+            "type": "long"
+          },
+          "comment": {
+            "type": "long"
+          }
+        }
+      },
+      "kakao": {
+        "properties": {
+          "view": {
+            "type": "long"
+          },
+          "reaction": {
+            "type": "long"
+          },
+          "comment": {
+            "type": "long"
+          }
+        }
+      }
+    }
+  }
+}
+
+
+GET /jtbcnews-raw-*/_search
+{
+  "sort": {
+    "reqtime": "desc"
+  }
+}
+
+GET /jtbcnews-raw-*/_search
+{
+  "query": {
+    "match": {
+      "news_id": "NB12016868"
+    }
+  }
+}
+
+$ curl -X POST api/saved_objects/index-pattern/jtbcnews-raw-*
+{
+  "refresh_fields": true,
+  "index_pattern": {
+    "fields": {}
+  }
+}
+
+POST /api/saved_objects/index-pattern/jtbcnews-raw-*
+{
+  "refresh_fields": true,
+  "index_pattern": {
+    "fields": {}
+  }
+}
+
+GET /jtbcnews-raw-2021.07.19
+
+
+GET /jtbcnews-raw-*/_search
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "exists": {
+            "field": "news_nm"
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+
+GET /jtbcnews-raw-2021.07.20/_mapping
+GET /jtbcnews-raw-2021.07.20/_search
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "action_name": "viewarticle"
+          }
+        },
+        {
+          "wildcard": {
+            "parm_referer": {
+              "value": "*naver*"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "news_id": {
+      "terms": {
+        "field": "news_id",
+        "size": 9999999
+      },
+      "aggs": {
+        "total": {
+          "sum": {
+            "field": "reqtime"
+          }
+        },
+				"total_sort": {
+					"bucket_sort": {
+						"size": 10,
+						"sort": [
+							{"total": "desc"}
+						]
+					}
+				}
+      }
+    }
+  }
+}
+
+GET /_sql?format=txt
+{
+  "query": """
+  SELECT news_nm FROM "jtbcnews-raw-*"
+  WHERE news_nm is not null
+  AND news_nm not like '%\%%'
+  """
+}
+
+
+GET /jtbcnews-raw-2021.07.19/_search
+{
+  "query": {
+    "exists": {
+      "field": "news_nm"
+    }
+  },
+  "sort": [
+    {
+      "reqtime": {
+        "order": "desc"
+      }
+    }
+  ]
+}
+
+GET /jtbcnews-raw-2021.07.14/_mapping
+
+GET /jtbcnews-raw-*/_search
+
+GET /jtbcnews-raw-2021.07.14/_mapping
+
+GET /jtbcnews-raw-2021.07.14/_search
+{
+  "query": {
+    "exists": {
+      "field": "location"
+    }
+  }
+}
+
+GET /jtbcnews-raw-2021.07.15/_search
+{
+  "query": {
+    "bool": {
+      "must":[
+        {
+          "range": {
+            "timestamp": {
+              "gte": "2021-07-15T13:31:00.000000000+09:00"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+
+GET /jtbcnews-raw-2021.07.14/_search
+{
+  "query": {
+    "bool": {
+      "must":[
+        {
+          "range": {
+            "timestamp": {
+              "gte": "2021-07-14T18:31:00.000000000+09:00"
+            }
+          }
+        },
+        {
+          "match": {
+            "parm_member_id": "10201989155446726"
+          }
+        },
+        {
+          "match": {
+            "parm_user_id": "j14caee-news9154-f129-9eaa-2e6a69395908"
+          }
+        }
+      ]
+    }
+  }
+}
+
+GET /jtbcnews-raw-2021.07.14/_search
+{
+  "query": {
+    "bool": {
+      "must":[
+        {
+          "range": {
+            "timestamp": {
+              "gte": "2021-07-14T18:31:00.000000000+09:00"
+            }
+          }
+        },
+        {
+          "match": {
+            "parm_member_id": "10201989155446726"
+          }
+        },
+        {
+          "match": {
+            "parm_user_id": "j14caee-news9154-f129-9eaa-2e6a69395908"
+          }
+        }
+      ],
+      "must_not": [
+        {
+          "match": {
+            "parm_member_id": ""
+          }
+        }
+      ]
+    }
+  }
+}
+
+GET /jtbc
+
+GET /jtbcnews-raw-2021.07.14/_search
+{
+  "query": {
+    "bool": {
+      "must_not": [
+        {
+          "match": {
+            "parm_member_id": ""
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+GET /jtbcnews-raw-2021.07.14/_search
+{
+  "query": {
+    "wildcard": {
+      "parm_referer": "*google*"
+    }
+  }
+}
+
+GET /jtbcnews-raw-2021.07.14/_
+
+GET /jtbcnews-raw-2021.07.14/_count
+
+GET /jtbcnews-raw*/_search
+
+POST /jtbcnews-raw-*/_delete_by_query
+{
+  "query": {
+    "terms": {
+      "parm_member_type": [
+        "2",
+        "9"
+      ]
+    }
+  }
+}
+
+
+GET /jtbcnews-raw-2021.07.01/_search
+
+GET /jtbcnews-raw-2021.07.07/_search
+
+GET /jtbcnews-raw-2021.07.09/_search
+GET /jtbcnews-raw-2021.07.09/_search
+
+GET /jtbcnews-raw-2021.07.09/_search
+
+GET /jtbcnews-raw-2021.07.09/_search
+
+GET /jtbcnews-raw-2021.07.08/_search
+
+GET /jtbcnews-raw-2021.07.08/_count
+
+GET /jtbcnews-raw-2021.07.07/_search
+{
+  "query": {
+    "exists": {
+      "field": "location"
+    }
+  }
+}
+
+GET /_cat/indices
+GET /_cat
+
+GET /_template/jtbcnews_raw_1
+
+PUT /_template/jtbcnews_raw_1
+{
+  "order" : 0,
+  "index_patterns" : [
+    "jtbcnews-raw*"
+  ],
+  "settings" : {
+    "analysis": {
+      "normalizer": {
+        "news_id_normalizer": {
+          "type": "custom",
+          "char_filter": [],
+          "filter": ["uppercase"]
+        }
+      }
+    },
+    "index" : {
+      "number_of_shards" : "1",
+      "number_of_replicas" : "0"
+    }
+  },
+  "mappings" : {
+    "_routing" : {
+      "required" : false
+    },
+    "numeric_detection" : true,
+    "dynamic_date_formats" : [
+      "strict_date_optional_time",
+      "yyyy/MM/dd HH:mm:ss Z||yyyy/MM/dd Z"
+    ],
+    "dynamic" : true,
+    "_source" : {
+      "excludes" : [ ],
+      "includes" : [ ],
+      "enabled" : true
+    },
+    "dynamic_templates" : [ ],
+    "date_detection" : true,
+    "properties" : {
+      "referer" : {
+        "type" : "keyword"
+      },
+      "parm_member_type" : {
+        "type" : "keyword"
+      },
+      "agent" : {
+        "type" : "keyword"
+      },
+      "code" : {
+        "type" : "keyword"
+      },
+      "reqbody" : {
+        "type" : "text"
+      },
+      "ua_browser_version" : {
+        "type" : "keyword"
+      },
+      "remote" : {
+        "type" : "keyword"
+      },
+      "path" : {
+        "type" : "keyword"
+      },
+      "hostname" : {
+        "type" : "keyword"
+      },
+      "ua_os_family" : {
+        "type" : "keyword"
+      },
+      "ua_device" : {
+        "type" : "keyword"
+      },
+      "ua_browser_family" : {
+        "type" : "keyword"
+      },
+      "tag" : {
+        "type" : "keyword"
+      },
+      "timestamp" : {
+        "type" : "date"
+      },
+      "method" : {
+        "type" : "keyword"
+      },
+      "reqtime" : {
+        "format" : "strict_date_optional_time||epoch_millis||dd/MMM/yyyy:HH:mm:ss Z",
+        "index" : true,
+        "ignore_malformed" : false,
+        "store" : false,
+        "type" : "date",
+        "doc_values" : true
+      },
+      "location": {
+        "type": "geo_point",
+        "null_value": null
+      },
+      "parm_member_id" : {
+        "type" : "keyword"
+      },
+      "es_index_name" : {
+        "type" : "keyword"
+      },
+      "parm_referer" : {
+        "type" : "keyword"
+      },
+      "action_name" : {
+        "type" : "keyword"
+      },
+      "action_type" : {
+        "type" : "keyword"
+      },
+      "news_id" : {
+        "type" : "keyword",
+        "normalizer": "news_id_normalizer"
+      },
+      "news_nm" : {
+        "type" : "keyword"
+      },
+      "parm_origin": {
+        "type" : "keyword"
+      },
+      "size" : {
+        "type" : "keyword"
+      },
+      "ua_os_version" : {
+        "type" : "keyword"
+      },
+      "parm_current_path" : {
+        "type" : "keyword"
+      },
+      "xforward" : {
+        "type" : "keyword"
+      },
+      "parm_user_id" : {
+        "type" : "keyword"
+      }
+    }
+  },
+  "aliases" : { }
+}
+
+GET /jtbcnews-raw-2021.07.01/_search
+
+GET /_cat/indices
+
+GET /jtbcnews-raw-*/_search
+
+
+GET /_template/jtbcnews_raw_1
+
+PUT /_template/jtbcnews_raw_1
+{
+  "index_patterns": [ "jtbcnews-raw*" ],
+  "order": 1,
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": "0"
+  },
+  "template" : {
+    "mappings": {
+      "properties": {
+        "agent": {
+          "type": "text"
+        },
+        "code": {
+          "type": "long"
+        },
+        "parm_create_date": {
+          "format": "strict_date_optional_time||epoch_millis",
+          "type": "date"
+        },
+        "reqbody": {
+          "type": "text"
+        },
+        "ua_browser_version": {
+          "type": "keyword"
+        },
+        "remote": {
+          "type": "ip"
+        },
+        "path": {
+          "type": "keyword"
+        },
+        "ua_os_family": {
+          "type": "keyword"
+        },
+        "ua_device": {
+          "type": "keyword"
+        },
+        "tag": {
+          "type": "keyword"
+        },
+        "ua_browser_family": {
+          "type": "keyword"
+        },
+        "method": {
+          "type": "keyword"
+        },
+        "ua_os_major_version": {
+          "type": "keyword"
+        },
+        "parm_current_path": {
+          "type": "keyword"
+        },
+        "parm_referer": {
+          "type": "keyword"
+        },
+        "parm_action_name": {
+          "type": "keyword"
+        },
+        "timestamp": {
+          "type": "date"
+        },
+        "size": {
+          "type": "long"
+        },
+        "ua_browser_major_version": {
+          "type": "keyword"
+        },
+        "ua_os_version": {
+          "type": "keyword"
+        },
+        "parm_member_id": {
+          "type": "keyword"
+        },
+        "parm_member_type": {
+          "type": "keyword"
+        },
+        "parm_user_id": {
+          "type": "keyword"
+        },
+        "parm_news_id": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}
+
+
+GET _search
+{
+  "query": {
+    "match_all": {}
+  }
+}
+
+GET /daily-content-summary/_search
+
+GET /daily-content-summary/_mapping
+
+GET /daily-content-summary/_search
+
+
+
+GET /daily-content-summary/_mapping
+
+PUT /daily-content-summary
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0
+  },
+  "mappings": {
+    "properties": {
+      "reg_date": {
+        "type": "date"
+      },
+      "last_modified_date": {
+        "type": "date"
+      },
+      "content_id": {
+        "type": "keyword"
+      },
+      "content_title": {
+        "type": "keyword"
+      },
+      "create_date": {
+        "type": "date"
+      },
+      "running_time": {
+        "type": "integer"
+      },
+      "tot_play_count": {
+        "type": "integer"
+      },
+      "tot_play_time": {
+        "type": "integer"
+      },
+      "tot_play_visitor": {
+        "type": "integer"
+      },
+      "avg_play_time": {
+        "type": "double"
+      },
+      "avg_play_rate": {
+        "type": "double"
+      },
+      "avg_uv_tot_play": {
+        "type": "double"
+      },
+      "tot_uv": {
+        "type": "integer"
+      },
+      "sec_1_tot_play": {
+        "type": "integer"
+      },
+      "sec_3_tot_play": {
+        "type": "integer"
+      },
+      "sec_10_tot_play": {
+        "type": "integer"
+      },
+      "sec_30_tot_play": {
+        "type": "integer"
+      },
+      "sec_60_tot_play": {
+        "type": "integer"
+      },
+      "sec_90_tot_play": {
+        "type": "integer"
+      },
+      "sec_120_tot_play": {
+        "type": "integer"
+      },
+      "sec_150_tot_play": {
+        "type": "integer"
+      },
+      "sec_180_tot_play": {
+        "type": "integer"
+      },
+      "sec_210_tot_play": {
+        "type": "integer"
+      },
+      "sec_240_tot_play": {
+        "type": "integer"
+      },
+      "sec_270_tot_play": {
+        "type": "integer"
+      },
+      "sec_300_tot_play": {
+        "type": "integer"
+      },
+      "sec_330_tot_play": {
+        "type": "integer"
+      },
+      "sec_360_tot_play": {
+        "type": "integer"
+      },
+      "sec_390_tot_play": {
+        "type": "integer"
+      },
+      "sec_420_tot_play": {
+        "type": "integer"
+      },
+      "sec_450_tot_play": {
+        "type": "integer"
+      },
+      "sec_480_tot_play": {
+        "type": "integer"
+      },
+      "sec_510_tot_play": {
+        "type": "integer"
+      },
+      "sec_540_tot_play": {
+        "type": "integer"
+      },
+      "sec_570_tot_play": {
+        "type": "integer"
+      },
+      "sec_600_tot_play": {
+        "type": "integer"
+      },
+      "rate_play_visitor": {
+        "type": "double"
+      },
+      "complete_play_count": {
+        "type": "integer"
+      },
+      "tot_reg_content": {
+        "type": "integer"
+      },
+      "rate_play_complete": {
+        "type": "double"
+      },
+      "tot_play_viewers": {
+        "type": "integer"
+      }
+    }
+  }
+}
+
+GET /_template/.monitoring-*
+
+GET /_cat/health
+GET /_cat/health
+
+
+GET /_cat/indices
+
+GET _cluster/settings
+
+
+PUT _cluster/settings
+{
+  "persistent": {
+    "xpack.monitoring.collection.enabled": true
+  }
+}
+
+PUT _cluster/settings
+{
+  "persistent": {
+    "xpack.monitoring.elasticsearch.collection.enabled": false
+  }
+}
+
+
+
+GET /_cluster/state/_all/foo,bar
+
+PUT _cluster/settings
+{
+  "persistent": {
+    "xpack.monitoring.collection.enabled": true
+  }
+}
+
+GET /content-summary/_stats
+PUT /content-summary
+{
+  "settings": {
+    "number_of_shards": 2,
+    "number_of_replicas": 1
+  },
+  "mappings": {
+    "properties": {
+      "view_total": {
+        "type": "integer"
+      },
+      "channel_name": {
+        "type": "keyword"
+      },
+      "channel_program_name": {
+        "type": "keyword"
+      },
+      "content_title": {
+        "type": "keyword"
+      },
+      "content_type": {
+        "type": "keyword"
+      },
+      "create_date": {
+        "type": "date"
+      },
+      "issue_name": {
+        "type": "keyword"
+      },
+      "last_modified_date": {
+        "type": "date"
+      },
+      "play_time": {
+        "type": "integer"
+      },
+      "news_format_name": {
+        "type": "keyword"
+      },
+      "series_name": {
+        "type": "keyword"
+      },
+      "speaker_name": {
+        "type": "keyword"
+      },
+      "theme_name": {
+        "type": "keyword"
+      },
+      "video_total": {
+        "type": "integer"
+      },
+      "video_total_1h": {
+        "type": "integer"
+      },
+      "video_total_2h": {
+        "type": "integer"
+      },
+      "video_total_3h": {
+        "type": "integer"
+      },
+      "video_total_4h": {
+        "type": "integer"
+      },
+      "video_total_5h": {
+        "type": "integer"
+      },
+      "video_total_6h": {
+        "type": "integer"
+      },
+      "video_total_7h": {
+        "type": "integer"
+      },
+      "video_total_8h": {
+        "type": "integer"
+      },
+      "video_total_9h": {
+        "type": "integer"
+      },
+      "video_total_10h": {
+        "type": "integer"
+      },
+      "video_total_11h": {
+        "type": "integer"
+      },
+      "video_total_12h": {
+        "type": "integer"
+      },
+      "video_total_13h": {
+        "type": "integer"
+      },
+      "video_total_14h": {
+        "type": "integer"
+      },
+      "video_total_15h": {
+        "type": "integer"
+      },
+      "video_total_16h": {
+        "type": "integer"
+      },
+      "video_total_17h": {
+        "type": "integer"
+      },
+      "video_total_18h": {
+        "type": "integer"
+      },
+      "video_total_19h": {
+        "type": "integer"
+      },
+      "video_total_20h": {
+        "type": "integer"
+      },
+      "video_total_21h": {
+        "type": "integer"
+      },
+      "video_total_22h": {
+        "type": "integer"
+      },
+      "video_total_23h": {
+        "type": "integer"
+      },
+      "video_total_24hours": {
+        "type": "integer"
+      }
+    }
+  }
+}
+
+PUT /content-summary
+{
+  "mappings": {
+    "date_detection": true,
+    "numeric_detection": true,
+      "properties" : {
+        "cards_total" : {
+          "type" : "integer"
+        },
+        "channel_name" : {
+          "type" : "keyword"
+        },
+        "channel_program_name" : {
+          "type" : "keyword"
+        },
+        "content_title" : {
+          "type" : "keyword"
+        },
+        "content_type" : {
+          "type" : "keyword"
+        },
+        "create_date" : {
+          "type" : "date"
+        },
+        "heynews" : {
+          "properties" : {
+            "comment_total" : {
+              "type" : "long"
+            },
+            "emotion_total" : {
+              "type" : "long"
+            }
+          }
+        },
+        "issue_name" : {
+          "type" : "keyword"
+        },
+        "last_modified_date" : {
+          "type" : "date"
+        },
+        "news_format_name" : {
+          "type" : "keyword"
+        },
+        "play_time" : {
+          "type" : "integer"
+        },
+        "series_name" : {
+          "type" : "keyword"
+        },
+        "speaker_name" : {
+          "type" : "keyword"
+        },
+        "theme_name" : {
+          "type" : "keyword"
+        },
+        "video_total" : {
+          "type" : "integer"
+        },
+        "video_total_0h" : {
+          "type" : "long"
+        },
+        "video_total_10h" : {
+          "type" : "integer"
+        },
+        "video_total_11h" : {
+          "type" : "integer"
+        },
+        "video_total_12h" : {
+          "type" : "integer"
+        },
+        "video_total_13h" : {
+          "type" : "integer"
+        },
+        "video_total_14h" : {
+          "type" : "integer"
+        },
+        "video_total_15h" : {
+          "type" : "integer"
+        },
+        "video_total_16h" : {
+          "type" : "integer"
+        },
+        "video_total_17h" : {
+          "type" : "integer"
+        },
+        "video_total_18h" : {
+          "type" : "integer"
+        },
+        "video_total_19h" : {
+          "type" : "integer"
+        },
+        "video_total_1h" : {
+          "type" : "integer"
+        },
+        "video_total_20h" : {
+          "type" : "integer"
+        },
+        "video_total_21h" : {
+          "type" : "integer"
+        },
+        "video_total_22h" : {
+          "type" : "integer"
+        },
+        "video_total_23h" : {
+          "type" : "integer"
+        },
+        "video_total_24h" : {
+          "type" : "integer"
+        },
+        "video_total_24hours" : {
+          "type" : "integer"
+        },
+        "video_total_2h" : {
+          "type" : "integer"
+        },
+        "video_total_3h" : {
+          "type" : "integer"
+        },
+        "video_total_4h" : {
+          "type" : "integer"
+        },
+        "video_total_5h" : {
+          "type" : "integer"
+        },
+        "video_total_6h" : {
+          "type" : "integer"
+        },
+        "video_total_7h" : {
+          "type" : "integer"
+        },
+        "video_total_8h" : {
+          "type" : "integer"
+        },
+        "video_total_9h" : {
+          "type" : "integer"
+        },
+        "view_total" : {
+          "type" : "integer"
+        }
+      }
+  }
+}

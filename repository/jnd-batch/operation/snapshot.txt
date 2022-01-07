@@ -1,0 +1,53 @@
+GET _cat/repositories
+GET snapshot_hourly-summary-202110-202112/_search
+
+POST /_snapshot/months_dashboard_202110_202112/restore
+
+GET /_snapshot/months_dashboard_202110_202112/_current
+
+GET snapshot_hourly-summary-202110-202112
+
+POST /_snapshot/months_dashboard_202110_202112/restore
+{
+  "indices": "hourly-*",
+  "ignore_unavailable": true,
+  "include_global_state": false,
+  "include_aliases": false
+}
+
+# restore 취소시
+DELETE /_snapshot/monthly_raw_202109/restore
+
+
+# 10월 기준 jtbc 로우데이터 : 27,940,556건
+# jtbc 로우데이터 월단위 리인덱스 taken time :
+
+# rename_replacement로 인덱스명을 변경해줘야 한다(must)
+POST _snapshot/test_monthly_dashboard_2021.10/dashboard_2021.10/_restore
+{
+  "rename_pattern": "reindex_(.+)",
+  "rename_replacement": "restored_$1"
+}
+
+# daily 로우데이터 복원(JTBC)
+POST _snapshot/test_daily_raw_2021.10.01/jtbc_2021.10.01/_restore
+{
+  "rename_pattern": "jtbcnews-(.+)",
+  "rename_replacement": "restored_jtbcnews_$1"
+}
+
+# daily 로우데이터 복원(NAVER)
+GET restored_naver-news-day-stat-202110/_search
+POST _snapshot/monthly_raw_202110/snapshot_naver_202110/_restore
+{
+  "rename_pattern": "reindex_naver-(.+)",
+  "rename_replacement": "restored_naver-$1"
+}
+
+# daily 로우데이터 복원(KAKAO)
+GET restored_naver-news-day-stat-202110/_search
+POST _snapshot/monthly_raw_202110/snapshot_kakao_202110/_restore
+{
+  "rename_pattern": "reindex_daum-(.+)",
+  "rename_replacement": "restored_daum-$1"
+}

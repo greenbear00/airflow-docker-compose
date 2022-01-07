@@ -1,0 +1,173 @@
+{
+  "index_patterns": [
+      "origin-jtbc-program-info"
+  ],
+  "template": {
+      "settings": {
+          "number_of_shards": null
+      },
+      "mappings": {
+        "_source": {
+          "enabled": true
+        },
+        "properties": {
+          "ACTOR": {
+            "type": "keyword"
+          },
+          "AUTO_KEYWORD_YN": {
+            "type": "keyword"
+          },
+          "BLOCK_AREA_INFO": {
+            "type": "keyword"
+          },
+          "BROAD_DAY": {
+            "type": "keyword"
+          },
+          "BROAD_DIV": {
+            "type": "keyword"
+          },
+          "BROAD_EDATE": {
+            "type": "keyword"
+          },
+          "BROAD_ETIME": {
+            "type": "keyword"
+          },
+          "BROAD_RUNTIME": {
+            "type": "keyword"
+          },
+          "BROAD_SDATE": {
+            "type": "keyword"
+          },
+          "BROAD_STIME": {
+            "type": "keyword"
+          },
+          "BROAD_TYPE": {
+            "type": "keyword"
+          },
+          "BR_FEEDING": {
+            "type": "keyword"
+          },
+          "BR_TYPE": {
+            "type": "keyword"
+          },
+          "CONTENTS_DIV": {
+            "type": "keyword"
+          },
+          "COPY_GRANT_YN": {
+            "type": "keyword"
+          },
+          "DEL_YN": {
+            "type": "keyword"
+          },
+          "DIV_TITLE": {
+            "type": "keyword"
+          },
+          "EVENTCODE": {
+            "type": "keyword"
+          },
+          "FOREIGN_SITE": {
+            "type": "keyword"
+          },
+          "GENRE_DIV": {
+            "type": "keyword"
+          },
+          "HOMEPAGE_SERVICE_YN": {
+            "type": "keyword"
+          },
+          "JOY_CP_ID": {
+            "type": "keyword"
+          },
+          "JTBC_PROG_ID": {
+            "type": "keyword"
+          },
+          "MEDIA_DIV": {
+            "type": "keyword"
+          },
+          "OPEN_BR_YN": {
+            "type": "keyword"
+          },
+          "PRODUCER": {
+            "type": "keyword"
+          },
+          "PROD_COUNTRY": {
+            "type": "keyword"
+          },
+          "PROD_DIV": {
+            "type": "keyword"
+          },
+          "PROD_NAME": {
+            "type": "keyword"
+          },
+          "PROG_DIV": {
+            "type": "keyword"
+          },
+          "PROG_ENG_NM": {
+            "type": "keyword"
+          },
+          "PROG_ID": {
+            "type": "keyword"
+          },
+          "PROG_MOB_IMG": {
+            "type": "keyword"
+          },
+          "PROG_NAME": {
+            "type": "keyword"
+          },
+          "PROG_ORG_NM": {
+            "type": "keyword"
+          },
+          "PROG_SEC_IMG": {
+            "type": "keyword"
+          },
+          "PROG_WEB_IMG": {
+            "type": "keyword"
+          },
+          "REPL_TIME": {
+            "type": "keyword"
+          },
+          "SEARCH_YN": {
+            "type": "keyword"
+          },
+          "SERVICE_COUNTRY": {
+            "type": "keyword"
+          },
+          "SERVICE_YN": {
+            "type": "keyword"
+          },
+          "SUB_CNT": {
+            "type": "long"
+          },
+          "TOT_EPIS_CNT": {
+            "type": "long"
+          },
+          "VODSECTION_SELECT": {
+            "type": "keyword"
+          },
+          "VODSECTION_YN": {
+            "type": "keyword"
+          },
+          "VOD_FEEDING": {
+            "type": "keyword"
+          },
+          "VOD_SERVICE": {
+            "type": "keyword"
+          },
+          "VOD_TRANSMIT": {
+            "type": "keyword"
+          },
+          "WATCH_AGE": {
+            "type": "long"
+          },
+          "reg_date": {
+            "type": "date"
+          },
+          "update_date": {
+            "type": "date"
+          }
+        }
+      },
+      "aliases": {
+
+      }
+  }
+}

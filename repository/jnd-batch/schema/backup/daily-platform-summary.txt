@@ -1,0 +1,48 @@
+POST /_aliases
+{
+   "actions":[
+      {
+         "add":{
+            "index":"origin-daily-platform-summary-2021",
+            "alias":"daily-platform-summary-2021",
+            "is_write_index":true
+         }
+      }
+   ]
+}
+
+PUT /origin-daily-platform-summary-2021
+{
+  "settings": {
+    "number_of_shards": 2,
+    "number_of_replicas": 1
+  },
+  "mappings": {
+    "properties": {
+      "reg_date": {
+        "type": "date"
+      },
+      "platform": {
+				"type": "keyword"
+      },
+			"view": {
+				"type": "integer"
+			},
+			"reaction": {
+				"type": "integer"
+			},
+			"comment": {
+				"type": "integer"
+			},
+      "view_total": {
+      	"type": "long"
+      },
+      "reaction_total": {
+      	"type": "long"
+      },
+      "comment_total": {
+      	"type": "long"
+      }
+    }
+  }
+}

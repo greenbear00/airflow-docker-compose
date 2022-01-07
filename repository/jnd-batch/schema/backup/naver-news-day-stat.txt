@@ -1,0 +1,101 @@
+POST _reindex?wait_for_completion=false
+{
+    "source": {
+        "index": "naver-news-day-stat-2021.08.24"
+    },
+    "dest": {
+        "index": "naver-news-day-stat-2021.10.25"
+    }
+}
+
+DELETE naver-news-day-stat-2021.08.24/_alias/naver-news-day-stat
+
+POST /_aliases
+{
+   "actions":[
+      {
+         "add":{
+            "index":"naver-news-day-stat-2021.10.25",
+            "alias":"naver-news-day-stat",
+            "is_write_index":true
+         }
+      }
+   ]
+}
+
+PUT /naver-news-day-stat-2021.10.25
+{
+  "settings": {
+    "number_of_shards": 2,
+    "number_of_replicas": 1
+  },
+  "mappings": {
+    "date_detection": true,
+    "numeric_detection": true,
+    "properties": {
+      "reg_date": {
+        "type": "date"
+      },
+      "news_id": {
+        "type": "keyword"
+      },
+      "news_nm": {
+        "type": "keyword"
+      },
+      "section": {
+        "type": "keyword"
+      },
+      "service_date": {
+        "type": "date"
+      },
+      "url": {
+        "type": "keyword"
+      },
+      "jtbc_url": {
+        "type": "keyword"
+      },
+      "aid": {
+        "type": "keyword"
+      },
+      "oid": {
+        "type": "keyword"
+      },
+      "pc_inc": {
+        "type": "integer"
+      },
+      "pc_cum": {
+        "type": "integer"
+      },
+      "mobile_inc": {
+        "type": "integer"
+      },
+      "mobile_cum": {
+        "type": "integer"
+      },
+      "total_inc": {
+        "type": "integer"
+      },
+      "total_cum": {
+        "type": "integer"
+      },
+      "reaction_inc": {
+        "type": "integer"
+      },
+      "reaction_cum": {
+        "type": "integer"
+      },
+      "comment_inc": {
+        "type": "integer"
+      },
+      "comment_cum": {
+        "type": "integer"
+      },
+      "click_inc": {
+        "type": "integer"
+      },
+      "click_cum": {
+        "type": "integer"
+      }
+    }
+  }
+}

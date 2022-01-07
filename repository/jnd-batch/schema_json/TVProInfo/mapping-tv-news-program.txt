@@ -1,0 +1,137 @@
+delete mapping_test_sujeng
+put mapping_test_sujeng
+{
+  "mappings": {
+    "properties": {
+      "MOD_DATE" : {
+        "type" : "date"
+      },
+      "PROG_ID" : {
+        "type" : "keyword"
+      },
+      "REG_DATE" : {
+        "type" : "date"
+      },
+      "hot_news" : {
+        "type" : "keyword"
+      },
+      "news_id" : {
+        "type" : "keyword"
+      },
+      "PROG_DATE" : {
+        "type" : "keyword"
+      },
+      "update_date" : {
+        "type" : "date"
+      }
+    }
+  }
+}
+get mapping_test_sujeng/_mapping
+get mapping_test_sujeng/_search
+get mapping_test_sujeng/_search
+{
+  "size": 100,
+  "query": {
+    "terms": {
+      "news_id": ["NB12034340"]
+    }
+  }
+}
+get mapping_test_sujeng/_search
+{
+  "size": 100,
+  "query": {
+    "term": {
+      "news_id": {
+        "value": "NB12034340"
+
+      }
+    }
+  }
+}
+
+get origin-mapping-tv-news-program-2021/_search
+{
+  "size": 100,
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "news_id": "NB12035458"
+          }
+        },{
+          "match": {
+            "prog_date": "20211129"
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "news_id": {
+			"terms": {
+				"field": "prog_id",
+				"size": 999999999
+			}
+    }
+  }
+}
+
+
+# 아래 bool+must 쿼리는 적용 안됨
+get origin-mapping-tv-news-program-2021/_search
+{
+	"size": 0,
+	"query": {
+		"bool": {
+			"must": [
+				{
+					"terms": {
+					  "news_id": [
+					    "NB12034340"
+					  ]
+					}
+				}
+			]
+		}
+	}
+}
+put origin-mapping-tv-news-program-2021/_doc/20211120_PR10000403
+{
+    "PROG_ID": "PR10000403",
+    "news_id": [
+        "NB12034373",
+        "NB12034387",
+        "NB12034394",
+        "NB12034393",
+        "NB12034386",
+        "NB12034385",
+        "NB12034384",
+        "NB12034383",
+        "NB12034382",
+        "NB12034381",
+        "NB12034377",
+        "NB12034380",
+        "NB12034391",
+        "NB12034390",
+        "NB12034379",
+        "NB12034378",
+        "NB12034376",
+        "NB12034375",
+        "NB12034374"
+    ],
+    "hot_news": [
+        "NB12034373",
+        "NB12034394",
+        "NB12034393",
+        "NB12034386",
+        "NB12034384",
+        "NB12034382"
+    ],
+    "PROG_DATE": "20211120",
+    "update_date": "2021-11-30T12:20:44+09:00",
+    "REG_DATE": "2021-11-20T18:24:39+09:00",
+    "MOD_DATE": "2021-11-20T22:02:56+09:00"
+}

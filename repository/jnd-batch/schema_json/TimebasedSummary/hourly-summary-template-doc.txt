@@ -1,0 +1,87 @@
+# 시간별 매트릭 현황
+PUT /hourly-summary-2021.08.30
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0
+  },
+  "mappings": {
+    "properties": {
+      "reg_date": {
+        "type": "date"
+      },
+      "jtbc": {
+        "properties": {
+          "pc_view": {
+            "type": "integer"
+          },
+          "mobile_view": {
+            "type": "integer"
+          },
+          "app_view": {
+            "type": "integer"
+          },
+          "view": {
+          	"type": "integer"
+          },
+          "reaction": {
+            "type": "integer"
+          },
+          "comment": {
+            "type": "integer"
+          }
+        }
+      },
+      "naver": {
+        "properties": {
+          "pc_view": {
+            "type": "integer"
+          },
+          "mobile_view": {
+            "type": "integer"
+          },
+          "view": {
+            "type": "long"
+          },
+          "reaction": {
+            "type": "long"
+          },
+          "comment": {
+            "type": "long"
+          }
+        }
+      },
+      "kakao": {
+        "properties": {
+          "pc_view": {
+            "type": "integer"
+          },
+          "mobile_view": {
+            "type": "integer"
+          },
+          "view": {
+            "type": "long"
+          },
+          "reaction": {
+            "type": "long"
+          },
+          "comment": {
+            "type": "long"
+          }
+        }
+      },
+      "product_total": {
+      	"type": "long"
+      },
+      "view_total": {
+      	"type": "long"
+      },
+      "reaction_total": {
+      	"type": "long"
+      },
+      "comment_total": {
+      	"type": "long"
+      }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "index_patterns": [
+      "origin-mapping-tv-news-program-*"
+  ],
+  "template": {
+      "settings": {
+          "number_of_shards": null
+      },
+      "mappings": {
+        "_source": {
+          "enabled": true
+        },
+        "properties": {
+          "mod_date" : {
+            "type" : "date"
+          },
+          "prog_date" : {
+            "type" : "keyword"
+          },
+          "prog_id" : {
+            "type" : "keyword"
+          },
+          "reg_date" : {
+            "type" : "date"
+          },
+          "hot_news" : {
+            "type" : "keyword"
+          },
+          "news_id" : {
+            "type" : "keyword"
+          },
+          "update_date" : {
+            "type" : "date"
+          }
+        }
+      },
+      "aliases": {
+
+      }
+  }
+}

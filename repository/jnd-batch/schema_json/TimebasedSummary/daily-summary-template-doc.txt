@@ -1,0 +1,340 @@
+///////////////////////////////////////////////////////////////////////////
+// index template 생성/삭제 및 조회
+///////////////////////////////////////////////////////////////////////////
+
+// 검증 끝나고, index에  지우기
+
+// 모든 index template 검색
+GET /_index_template
+
+// daily-*로 시작되는 index template 검색
+GET /_index_template/daily-*
+
+// index_template 지우기
+DELETE /_index_template/daily-summary-stat-template
+
+// index_template 생성
+PUT _index_template/daily-summary-stat-template
+{
+  "index_patterns" : [
+    "daily-summary-stat*"
+  ],
+  "template": {
+    "settings" : {
+      "number_of_shards": 1
+    },
+    "mappings" : {
+      "_source": {
+          "enabled": true
+      },
+      "properties": {
+        "jtbc": {
+          "properties": {
+            "create_news_count": {
+                "type": "integer"
+            },
+            "create_news": {
+              "properties": {
+                "news_id": {
+                  "type": "keyword"
+                },
+                "news_name": {
+                  "type": "keyword"
+                }
+              }
+            },
+            "pc_view":{
+                "type": "integer"
+            },
+            "mobile_view":{
+                "type": "integer"
+            },
+            "app_view":{
+                "type": "integer"
+            },
+            "view_total":{
+                "type": "integer"
+            },
+            "reaction_total":{
+                "type": "integer"
+            },
+            "comment_total":{
+                "type": "integer"
+            },
+            "news": {
+              "properties":{
+                "news_name":{
+                    "type": "keyword"
+                },
+                "mobile_view":{
+                    "type": "integer"
+                },
+                "pc_view":{
+                    "type": "integer"
+                },
+                "app_view":{
+                    "type": "integer"
+                },
+                "reaction": {
+                    "type": "integer"
+                },
+                "comment":{
+                    "type": "integer"
+                },
+                "news_id":{
+                    "type": "keyword"
+                }
+              }
+            }
+          }
+        },"naver": {
+          "properties": {
+            "pc_view":{
+                "type": "integer"
+            },
+            "mobile_view":{
+                "type": "integer"
+            },
+            "view_total":{
+                "type": "integer"
+            },
+            "reaction_total":{
+                "type": "integer"
+            },
+            "comment_total":{
+                "type": "integer"
+            },
+            "news": {
+              "properties":{
+                "news_name":{
+                    "type": "keyword"
+                },
+                "mobile_view":{
+                    "type": "integer"
+                },
+                "pc_view":{
+                    "type": "integer"
+                },
+                "app_view":{
+                    "type": "integer"
+                },
+                "reaction": {
+                    "type": "integer"
+                },
+                "comment":{
+                    "type": "integer"
+                },
+                "news_id":{
+                    "type": "keyword"
+                }
+              }
+            }
+          }
+        },"kakao": {
+          "properties": {
+            "pc_view":{
+                "type": "integer"
+            },
+            "mobile_view":{
+                "type": "integer"
+            },
+            "view_total":{
+                "type": "integer"
+            },
+            "reaction_total":{
+                "type": "integer"
+            },
+            "comment_total":{
+                "type": "integer"
+            },
+            "news": {
+              "properties":{
+                "news_name":{
+                    "type": "keyword"
+                },
+                "mobile_view":{
+                    "type": "integer"
+                },
+                "pc_view":{
+                    "type": "integer"
+                },
+                "app_view":{
+                    "type": "integer"
+                },
+                "reaction": {
+                    "type": "integer"
+                },
+                "comment":{
+                    "type": "integer"
+                },
+                "news_id":{
+                    "type": "keyword"
+                }
+              }
+            }
+          }
+        },
+        "view_total": {
+            "type": "integer"
+        },
+        "reaction_total": {
+            "type": "integer"
+        },
+        "comment_total": {
+            "type": "integer"
+        },
+        "reg_date": {
+            "type": "date"
+        }
+      }
+    },
+    "aliases" : { }
+  }
+}
+
+
+
+
+///////////////////////////////////////////////////////////////////////////
+// index 생성/삭제 및 조회
+///////////////////////////////////////////////////////////////////////////
+DELETE daily-summary-stat
+GET daily-summary-stat/_search
+
+// mapping 정보 가져오기
+get daily-summary-stat/_mapping
+
+// search 테스트 (jtbc.news.news_id에 있는 데이터 중 "NB1111"이 있는 데이터를 찾아라)
+get daily-summary-stat/_search
+{
+  "size": 10,
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "jtbc.news.news_id":  "NB1111"
+          }
+        }
+      ]
+    }
+  }
+}
+
+// search 테스트 (jtbc.news.news_id에 있는 데이터 중 ["test111", "test222"]이 있는 데이터를 찾아라)
+get daily-summary-stat/_search
+{
+  "query": {
+    "terms" : { "jtbc.news.news_id" : ["test111", "test222"]
+    }
+  }
+}
+
+//PUT daily-summary-stat/_doc/20211020
+{
+  "jtbc": {
+    "create_news_count": 7,
+    "create_news" : [
+      {
+        "news_id" : "NB12027570",
+        "news_name" : """[현장영상] "'초과 이익 환수' 거절한 사람 누구?"…이재명 답변은"""
+      },
+      {
+        "news_id" : "NB12027568",
+        "news_name" : "[현장영상] 이재명, 윤석열 처가 '양평 의혹'에 \"거의 무법자들\""
+      },
+      {
+        "news_id" : "NB12027596",
+        "news_name" : "[현장영상] \"도둑질 한 사람 뭐라 표현하냐\"는 물음에 이재명 \"국민의힘\""
+      }
+    ],
+    "pc_view": 10856,
+    "mobile_view":13635,
+    "app_view": 629,
+    "view_total": 25120,
+    "reaction_total":8,
+    "comment_total": 1,
+    "news": [
+      {
+        "news_name": "test111",
+        "mobile_view": 392,
+        "pc_view": 1830,
+        "app_view": 43,
+        "reaction": 0,
+        "comment": 0,
+        "news_id": "test111"
+      },
+      {
+        "news_name": "test222",
+        "mobile_view": 157,
+        "pc_view": 1087,
+        "app_view": 206,
+        "reaction": 1,
+        "comment": 0,
+        "news_id": "test222"
+      }
+    ]
+  },
+  "naver": {
+    "pc_view": 10856,
+    "mobile_view":13635,
+    "app_view": 629,
+    "view_total": 25120,
+    "reaction_total":8,
+    "comment_total": 1,
+    "news": [
+      {
+        "news_name": "test111",
+        "mobile_view": 392,
+        "pc_view": 1830,
+        "app_view": 43,
+        "reaction": 0,
+        "comment": 0,
+        "news_id": "test111"
+      },
+      {
+        "news_name": "test222",
+        "mobile_view": 157,
+        "pc_view": 1087,
+        "app_view": 206,
+        "reaction": 1,
+        "comment": 0,
+        "news_id": "test222"
+      }
+    ]
+  },
+  "kakao": {
+    "create_news_count": 7,
+    "pc_view": 10856,
+    "mobile_view":13635,
+    "app_view": 629,
+    "view_total": 25120,
+    "reaction_total":8,
+    "comment_total": 1,
+    "news": [
+      {
+        "news_name": "test111",
+        "mobile_view": 392,
+        "pc_view": 1830,
+        "app_view": 43,
+        "reaction": 0,
+        "comment": 0,
+        "news_id": "test111"
+      },
+      {
+        "news_name": "test222",
+        "mobile_view": 157,
+        "pc_view": 1087,
+        "app_view": 206,
+        "reaction": 1,
+        "comment": 0,
+        "news_id": "test222"
+      }
+    ]
+  },
+  "view_total": 1,
+  "reaction_total": 1,
+  "comment_total": 1,
+  "reg_date": "2021-10-20T12:00:00+09:00"
+}
+

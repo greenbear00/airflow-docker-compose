@@ -1,0 +1,136 @@
+{
+    "index_patterns": [
+        "origin-hourly-summary-*"
+    ],
+    "template": {
+        "settings": {
+            "number_of_shards": null
+        },
+        "mappings": {
+            "_source": {
+                "enabled": true
+            },
+            "properties": {
+                "jtbc": {
+                  "properties": {
+                      "jtbc_produce": {
+                          "type": "integer"
+                      },
+                      "jam_produce": {
+                          "type": "integer"
+                      },
+                      "produce": {
+                          "type": "integer"
+                      },
+                      "jtbc_produce_news": {
+                          "properties": {
+                              "news_id": {
+                                  "type": "keyword"
+                              }
+                          }
+                      },
+                      "jam_produce_news": {
+                          "properties": {
+                              "news_id": {
+                                  "type": "keyword"
+                              }
+                          }
+                      },
+                      "pc_view": {
+                          "type": "integer"
+                      },
+                      "mobile_view": {
+                          "type": "integer"
+                      },
+                      "app_view": {
+                          "type": "integer"
+                      },
+                      "view_total": {
+                          "type": "integer"
+                      },
+                      "reaction_total": {
+                          "type": "integer"
+                      },
+                      "comment_total": {
+                          "type": "integer"
+                      },
+                      "news": {
+                          "properties": {
+                              "news_id": {
+                                  "type": "keyword"
+                              }
+                          }
+                      }
+                  }
+              },
+                "naver": {
+                    "properties": {
+                        "pc_view": {
+                            "type": "integer"
+                        },
+                        "mobile_view": {
+                            "type": "integer"
+                        },
+                        "view_total": {
+                            "type": "integer"
+                        },
+                        "reaction_total": {
+                            "type": "integer"
+                        },
+                        "comment_total": {
+                            "type": "integer"
+                        },
+                        "news": {
+                            "properties": {
+                                "news_id": {
+                                    "type": "keyword"
+                                }
+                            }
+                        }
+                    }
+                },
+                "kakao": {
+                    "properties": {
+                        "pc_view": {
+                            "type": "integer"
+                        },
+                        "mobile_view": {
+                            "type": "integer"
+                        },
+                        "view_total": {
+                            "type": "integer"
+                        },
+                        "reaction_total": {
+                            "type": "integer"
+                        },
+                        "comment_total": {
+                            "type": "integer"
+                        },
+                        "news": {
+                            "properties": {
+                                "news_id": {
+                                    "type": "keyword"
+                                }
+                            }
+                        }
+                    }
+                },
+                "view_total": {
+                    "type": "integer"
+                },
+                "reaction_total": {
+                    "type": "integer"
+                },
+                "comment_total": {
+                    "type": "integer"
+                },
+                "reg_date": {
+                    "type": "date"
+                }
+            }
+        },
+        "aliases": {
+
+        }
+    }
+}

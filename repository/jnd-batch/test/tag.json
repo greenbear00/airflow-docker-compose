@@ -1,0 +1,13 @@
+{
+  "attributes": {
+    "color": "#6092C0",
+    "description": "",
+    "name": "운영"
+  },
+  "coreMigrationVersion": "7.13.2",
+  "id": "ee51ac50-27d5-11ec-b2d9-6fb9c12d3e6d",
+  "references": [],
+  "type": "tag",
+  "updated_at": "2021-12-01T02:06:55.032Z",
+  "version": "WzM4MTU5NywxMF0="
+}
