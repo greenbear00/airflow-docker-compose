@@ -6,18 +6,13 @@ $ docker-compose -version
 docker-compose version 1.29.2, build 5becea4c
 ```
 
-<<<<<<< HEAD
 ## 2. airflow docker-compose 다운로드
-=======
-## # 2. airflow docker-compose 다운로드
->>>>>>> a6b3b69c1f6fb5369589dfceaa858e6fa1f339aa
 ```bash
 # quick start: yaml 다운로드
 $ curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.2.2/docker-compose.yaml'
 
 # 해당 머신의 memory check (4gb 이상이어야 함)
 $ docker run --rm "debian:buster-slim" bash -c 'numfmt --to iec $(echo $(($(getconf _PHYS_PAGES) * $(getconf PAGE_SIZE))))'
-<<<<<<< HEAD
 ```
 
 ## 3. base 이미지인 airflow 2.2.2 버전 수정
@@ -494,7 +489,3 @@ $ docker exec -u airflow airflow-worker2 pip3 install -r /opt/airflow/repository
 ```
 $ docker exec -u airflow airflow-jupyter bash
 $ jupyter notebook list
-
-=======
->>>>>>> a6b3b69c1f6fb5369589dfceaa858e6fa1f339aa
-```
