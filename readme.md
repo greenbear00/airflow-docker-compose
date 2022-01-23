@@ -1,4 +1,4 @@
-# airflow docker-compose
+# airflow docker-compose (w. mysql)
 
 ## 1. docker-compose version check
 ```bash
