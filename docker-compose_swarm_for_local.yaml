@@ -104,6 +104,8 @@ services:
       MYSQL_DATABASE: airflow
     volumes:
       - mysql-db-volume:/var/lib/mysql
+    security_opt:
+      - seccomp:unconfined
     command: # 명령어 실행
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
@@ -170,6 +172,7 @@ services:
     build: .
     environment:
       AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: mysql+pymysql://airflow:airflow@mysql:3306/airflow
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: mysql+pymysql://airflow:airflow@mysql:3306/airflow
       AIRFLOW__CELERY__RESULT_BACKEND: db+mysql://airflow:airflow@mysql:3306/airflow
       AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
@@ -204,6 +207,7 @@ services:
     build: .
     environment:
       AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: mysql+pymysql://airflow:airflow@mysql:3306/airflow
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: mysql+pymysql://airflow:airflow@mysql:3306/airflow
       AIRFLOW__CELERY__RESULT_BACKEND: db+mysql://airflow:airflow@mysql:3306/airflow
       AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
@@ -237,6 +241,7 @@ services:
     build: .
     environment:
       AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: mysql+pymysql://airflow:airflow@mysql:3306/airflow
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: mysql+pymysql://airflow:airflow@mysql:3306/airflow
       AIRFLOW__CELERY__RESULT_BACKEND: db+mysql://airflow:airflow@mysql:3306/airflow
       AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
@@ -282,6 +287,7 @@ services:
     command: triggerer
     environment:
       AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: mysql+pymysql://airflow:airflow@mysql:3306/airflow
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: mysql+pymysql://airflow:airflow@mysql:3306/airflow
       AIRFLOW__CELERY__RESULT_BACKEND: db+mysql://airflow:airflow@mysql:3306/airflow
       AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
@@ -386,6 +392,7 @@ services:
       # _AIRFLOW_WWW_USER_USERNAME: ${_AIRFLOW_WWW_USER_USERNAME:-airflow}
       # _AIRFLOW_WWW_USER_PASSWORD: ${_AIRFLOW_WWW_USER_PASSWORD:-airflow}
       AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: mysql+pymysql://airflow:airflow@mysql:3306/airflow
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: mysql+pymysql://airflow:airflow@mysql:3306/airflow
       AIRFLOW__CELERY__RESULT_BACKEND: db+mysql://airflow:airflow@mysql:3306/airflow
       AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
@@ -429,6 +436,7 @@ services:
     command: celery flower
     environment:
       AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: mysql+pymysql://airflow:airflow@mysql:3306/airflow
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: mysql+pymysql://airflow:airflow@mysql:3306/airflow
       AIRFLOW__CELERY__RESULT_BACKEND: db+mysql://airflow:airflow@mysql:3306/airflow
       AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
