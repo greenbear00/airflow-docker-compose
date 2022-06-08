@@ -8,23 +8,23 @@ docker-compose version 1.29.2, build 5becea4c
 
 ## 2. airflow docker-compose 다운로드
 ```bash
-# quick start: yaml 다운로드
-$ curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.2.3/docker-compose.yaml'
+# quick start: yaml 다운로드 (2022.06.08 stable version 2.3.2)
+$ curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.3.2/docker-compose.yaml'
 
 # 해당 머신의 memory check (4gb 이상이어야 함)
 $ docker run --rm "debian:buster-slim" bash -c 'numfmt --to iec $(echo $(($(getconf _PHYS_PAGES) * $(getconf PAGE_SIZE))))'
 ```
 
-## 3. base 이미지인 airflow 2.2.3 버전 수정
+## 3. base 이미지인 airflow 2.3.2 버전 수정
 ### 3.1 Dockerfile
 apache/airflow:2.2.3를 기본으로 하며, docker-compose에 기존 postgres 대신 **mysql로 변경**
 그와 관련된 패키지 install 포함
 
 ```
 $ mkdir .dags .logs .plugins
-$ echo -e "AIRFLOW_UID=$(id -u)\nAIRFLOW_GID=0" > .env
+$ echo -e "AIRFLOW_UID=$(id -u)" > .env
 
-$ docker pull apache/airflow:2.2.3
+$ docker pull apache/airflow:2.3.2
 
 # mysql로 이미지 변동으로 인한 pymysql 패키지 설치
 $ vi Dockerfile

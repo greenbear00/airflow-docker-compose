@@ -1,4 +1,4 @@
-FROM apache/airflow:2.2.3
+FROM apache/airflow:2.3.2
 
 RUN /usr/local/bin/python -m pip install --upgrade pip --proxy http://192.168.1.139:3128
 RUN pip3 install pymysql --proxy http://192.168.1.139:3128
