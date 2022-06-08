@@ -227,7 +227,7 @@ services:
       - ./plugins:/opt/airflow/plugins
       - ./repository:/opt/airflow/repository
     user: "${AIRFLOW_UID:-50000}:0"
-    container_name: airflow-worker
+    # container_name: airflow-worker
     command: celery worker
     healthcheck:
       test:
