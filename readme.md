@@ -17,7 +17,7 @@ $ docker run --rm "debian:buster-slim" bash -c 'numfmt --to iec $(echo $(($(getc
 
 ## 3. base 이미지인 airflow 2.3.2 버전 수정
 ### 3.1 Dockerfile
-apache/airflow:2.2.3를 기본으로 하며, docker-compose에 기존 postgres 대신 **mysql로 변경**
+apache/airflow:2.3.2를 기본으로 하며, docker-compose에 기존 postgres 대신 **mysql로 변경**
 그와 관련된 패키지 install 포함
 
 ```
@@ -87,7 +87,7 @@ docker exec -u [root|airflow|default] -it airflow:2.3.2-01 bash
 ```
 
 
-## 4. docker-compose 수정
+## 4. docker-compose
 ### 4.1 docker-compose.yaml
 ```
 # Licensed to the Apache Software Foundation (ASF) under one
@@ -136,8 +136,8 @@ x-airflow-common:
   # In order to add custom dependencies or upgrade provider packages you can use your extended image.
   # Comment the image line, place your Dockerfile in the directory where you placed the docker-compose.yaml
   # and uncomment the "build" line below, Then run `docker-compose build` to build the images.
-  # image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.2.2}
-  image: ${AIRFLOW_IMAGE_NAME:-airflow:2.2.3-01}
+  # image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.3.2}
+  image: ${AIRFLOW_IMAGE_NAME:-airflow:2.3.2-01}
   # build: .
   environment:
     &airflow-common-env
@@ -250,9 +250,9 @@ services:
       airflow-init:
         condition: service_completed_successfully
 
-  airflow-worker1:
+  airflow-worker:
     <<: *airflow-common
-    container_name: airflow-worker1
+    container_name: airflow-worker
     command: celery worker
     healthcheck:
       test:
@@ -267,32 +267,8 @@ services:
       # See https://airflow.apache.org/docs/docker-stack/entrypoint.html#signal-propagation
       DUMB_INIT_SETSID: "0"
     restart: always
-    ports:
-      - 50001:8793
-    depends_on:
-      <<: *airflow-common-depends-on
-      airflow-init:
-        condition: service_completed_successfully
-
-  airflow-worker2:
-    <<: *airflow-common
-    container_name: airflow-worker2
-    command: celery worker
-    healthcheck:
-      test:
-        - "CMD-SHELL"
-        - 'celery --app airflow.executors.celery_executor.app inspect ping -d "celery@$${HOSTNAME}"'
-      interval: 10s
-      timeout: 10s
-      retries: 5
-    environment:
-      <<: *airflow-common-env
-      # Required to handle warm shutdown of the celery workers properly
-      # See https://airflow.apache.org/docs/docker-stack/entrypoint.html#signal-propagation
-      DUMB_INIT_SETSID: "0"
-    restart: always
-    ports:
-      - 50002:8793
+    #ports:
+    #  - 50001:8793
     depends_on:
       <<: *airflow-common-depends-on
       airflow-init:
@@ -463,7 +439,63 @@ mysql                            "docker-entrypoint.s…"   mysql               
 redis                            "docker-entrypoint.s…"   redis               running (healthy)   6379/tcp
 ```
 
-## airflow 확인하기
+
+
+
+
+
+
+
+## 4-2. docker-compose with swarm
+swarm 버전으로 airflow를 docker-compose해서 올리는 방법
+### 4-2.1. private docker registry
+swarm 버전으로 airflow를 올리기 위해서는 사설 docker registry가 존재해야 함.
+일반적으로 nexus를 많이 쓰나, 여기에서는 docker registry를 그대로 사용
+```
+$ docker image pull registry
+
+# 기본 pass 맞추기 
+$ mkdir docker-registry
+$ cd docker-registry
+$ mkddir data
+
+# 띄우기
+$ docker run -d -p 5000:5000 --restart=always --name registry -v ${pwd}/data:/var/lib/registry registry
+
+# 실제 private registry에 이미지 올려보기
+$ docker pull centos:8
+$ vi Dockerfile
+FROM docker.io/centos:8
+#FROM cetons:8
+
+CMD echo "hello, os"
+
+# 빌드 및 private registry에 이미지 올리기
+$ docker build -t localhost:5000/centos:8-01 .
+$ docker push localhost:5000/centos:8-01 
+
+# 확인
+$ docker images localhost:5000/centos:8-01
+$ curl -X GET http://localhost:5000/v2/_catalog
+{"repositories": ["centos"]}
+
+```
+### 4-2.2 airflow 준비
+```
+$ docker build -f Dockerfile_local -t airflow:2.3.2-01 .
+$ docker image tag airflow:2.3.2-01 localhost:5000/airflow:2.3.2-01
+$ docker push localhost:5000/airflow:2.3.2-01
+```
+
+### 4-2.3 airflow docker-compose 파일 수정
+해당 버전에 image만 private docker repository로 변경해서 push 후, deploy할경우 아래와 같은 에러가 발생.
+따라서 docker-compose 파일ㅇ르 수정해줘야 함.
+
+- services.airflow-scheduler.depends_on must be a list
+
+
+
+## 5. airflow 확인하기
 http://localhost:8080 으로 접속하면 airflow로 접속되며,
 기본 ID/PW는 위에 설정한 ID/PW를 따른다.
 
@@ -483,7 +515,7 @@ $ docker exec -u airflow airflow-worker2 pip3 install -r /opt/airflow/repository
 ![airflow](img/airflow_8080.png)
 
 
-## jupyter
+## 6. jupyter
 실제 http://localhost:8888 로 접속하고 token에 'airflow'를 입력하면 접속 가능
 확인방법
 ```

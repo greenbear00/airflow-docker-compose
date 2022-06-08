@@ -127,8 +127,27 @@ services:
     restart: always
 
   airflow-webserver:
-    <<: *airflow-common
+    # <<: *airflow-common
     container_name: airflow-webserver
+    image: ${AIRFLOW_IMAGE_NAME:-localhost:5000/airflow:2.3.2-01}
+    build: .
+    environment:
+      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: mysql+pymysql://airflow:airflow@mysql:3306/airflow
+      AIRFLOW__CELERY__RESULT_BACKEND: db+mysql://airflow:airflow@mysql:3306/airflow
+      AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
+      AIRFLOW__CORE__FERNET_KEY: ''
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: 'true'
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__API__AUTH_BACKEND: 'airflow.api.auth.backend.basic_auth'
+      # (docker에 proxy 설정하여 가능하지만, 초기 올릴때만 사용하는 것이기에 비추천)
+      # _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./repository:/opt/airflow/repository
     command: webserver
     ports:
       - 8080:8080
@@ -138,14 +157,34 @@ services:
       timeout: 10s
       retries: 5
     restart: always
-    depends_on:
-      <<: *airflow-common-depends-on
-      airflow-init:
-        condition: service_completed_successfully
+    depends_on: [airflow-init]
+      # <<: *airflow-common-depends-on
+      # airflow-init:
+        # condition: service_completed_successfully
 
   airflow-scheduler:
-    <<: *airflow-common
+    # <<: *airflow-common
+    images: ${AIRFLOW_IMAGE_NAME:-localhost:5000/airflow:2.3.2-01}
     container_name: airflow-scheduler
+    build: .
+    environment:
+      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: mysql+pymysql://airflow:airflow@mysql:3306/airflow
+      AIRFLOW__CELERY__RESULT_BACKEND: db+mysql://airflow:airflow@mysql:3306/airflow
+      AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
+      AIRFLOW__CORE__FERNET_KEY: ''
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: 'true'
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__API__AUTH_BACKEND: 'airflow.api.auth.backend.basic_auth'
+      # (docker에 proxy 설정하여 가능하지만, 초기 올릴때만 사용하는 것이기에 비추천)
+      # _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./repository:/opt/airflow/repository
+    user: "${AIRFLOW_UID:-50000}:0"
     command: scheduler
     healthcheck:
       test: ["CMD-SHELL", 'airflow jobs check --job-type SchedulerJob --hostname "$${HOSTNAME}"']
@@ -153,25 +192,67 @@ services:
       timeout: 10s
       retries: 5
     restart: always
-    depends_on:
-      <<: *airflow-common-depends-on
-      airflow-init:
-        condition: service_completed_successfully
+    depends_on: [airflow-init]
+      # <<: *airflow-common-depends-on
+      # airflow-init:
+      #   condition: service_completed_successfully
 
   airflow-jupyter:
-    <<: *airflow-common
+    # <<: *airflow-common
+    image: ${AIRFLOW_IMAGE_NAME:-locahost:5000/airflow:2.3.2-01}
+    build: .
+    environment:
+      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: mysql+pymysql://airflow:airflow@mysql:3306/airflow
+      AIRFLOW__CELERY__RESULT_BACKEND: db+mysql://airflow:airflow@mysql:3306/airflow
+      AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
+      AIRFLOW__CORE__FERNET_KEY: ''
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: 'true'
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__API__AUTH_BACKEND: 'airflow.api.auth.backend.basic_auth'
+      # (docker에 proxy 설정하여 가능하지만, 초기 올릴때만 사용하는 것이기에 비추천)
+      # _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./repository:/opt/airflow/repository
+    user: "${AIRFLOW_UID:-50000}:0"
     container_name: airflow-jupyter
     command: bash -cx "jupyter notebook --ip 0.0.0.0  --NotebookApp.token='airflow' --no-browser"
     ports:
       - 8888:8888
     restart: always
-    depends_on:
-      <<: *airflow-common-depends-on
-      airflow-init:
-        condition: service_completed_successfully
+    depends_on: [airflow-scheduler]
+      # <<: *airflow-common-depends-on
+      # airflow-init:
+      #   condition: service_completed_successfully
 
   airflow-worker:
-    <<: *airflow-common
+    # <<: *airflow-common
+    image: ${AIRFLOW_IMAGE_NAME:-localhost:5000/airflow:2.3.2-01}
+    # docker-swarm으로 올릴때는 repository에 있는 이미지를 build 한다는 명령어가 있어야 함
+    build: .
+    environment:
+      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: mysql+pymysql://airflow:airflow@mysql:3306/airflow
+      AIRFLOW__CELERY__RESULT_BACKEND: db+mysql://airflow:airflow@mysql:3306/airflow
+      AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
+      AIRFLOW__CORE__FERNET_KEY: ''
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: 'true'
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__API__AUTH_BACKEND: 'airflow.api.auth.backend.basic_auth'
+      DUMB_INIT_SETSID: "0"
+      # (docker에 proxy 설정하여 가능하지만, 초기 올릴때만 사용하는 것이기에 비추천)
+      # _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./repository:/opt/airflow/repository
+    user: "${AIRFLOW_UID:-50000}:0"
     container_name: airflow-worker
     command: celery worker
     healthcheck:
@@ -181,60 +262,57 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
-    environment:
-      <<: *airflow-common-env
-      # Required to handle warm shutdown of the celery workers properly
-      # See https://airflow.apache.org/docs/docker-stack/entrypoint.html#signal-propagation
-      DUMB_INIT_SETSID: "0"
+    # environment:
+    #   <<: *airflow-common-env
+    #   # Required to handle warm shutdown of the celery workers properly
+    #   # See https://airflow.apache.org/docs/docker-stack/entrypoint.html#signal-propagation
+    #   DUMB_INIT_SETSID: "0"
     restart: always
-    # ports:
-    #   - 50001:8793
-    depends_on:
-      <<: *airflow-common-depends-on
-      airflow-init:
-        condition: service_completed_successfully
-
-  # airflow-worker2:
-  #   <<: *airflow-common
-  #   container_name: airflow-worker2
-  #   command: celery worker
-  #   healthcheck:
-  #     test:
-  #       - "CMD-SHELL"
-  #       - 'celery --app airflow.executors.celery_executor.app inspect ping -d "celery@$${HOSTNAME}"'
-  #     interval: 10s
-  #     timeout: 10s
-  #     retries: 5
-  #   environment:
-  #     <<: *airflow-common-env
-  #     # Required to handle warm shutdown of the celery workers properly
-  #     # See https://airflow.apache.org/docs/docker-stack/entrypoint.html#signal-propagation
-  #     DUMB_INIT_SETSID: "0"
-  #   restart: always
-  #   ports:
-  #     - 50002:8793
-  #   depends_on:
-  #     <<: *airflow-common-depends-on
-  #     airflow-init:
-  #       condition: service_completed_successfully
+    depends_on: [airflow-scheduler]
+      # #<<: *airflow-common-depends-on
+      # airflow-init:
+      #   condition: service_completed_successfully
 
   airflow-triggerer:
-    <<: *airflow-common
+    # <<: *airflow-common
+    image: ${AIRFLOW_IMAGE_NAME:-localhost:5000/airflow:2.3.2-01}
+    build: .
     container_name: airflow-triggerer
     command: triggerer
+    environment:
+      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: mysql+pymysql://airflow:airflow@mysql:3306/airflow
+      AIRFLOW__CELERY__RESULT_BACKEND: db+mysql://airflow:airflow@mysql:3306/airflow
+      AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
+      AIRFLOW__CORE__FERNET_KEY: ''
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: 'true'
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__API__AUTH_BACKEND: 'airflow.api.auth.backend.basic_auth'
+      # (docker에 proxy 설정하여 가능하지만, 초기 올릴때만 사용하는 것이기에 비추천)
+      # _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./repository:/opt/airflow/repository
+    user: "${AIRFLOW_UID:-50000}:0"
     healthcheck:
       test: ["CMD-SHELL", 'airflow jobs check --job-type TriggererJob --hostname "$${HOSTNAME}"']
       interval: 10s
       timeout: 10s
       retries: 5
     restart: always
-    depends_on:
-      <<: *airflow-common-depends-on
-      airflow-init:
-        condition: service_completed_successfully
+    depends_on: [airflow-init]
+      # <<: *airflow-common-depends-on
+      # airflow-init:
+      #   condition: service_completed_successfully
 
   airflow-init:
-    <<: *airflow-common
+    # <<: *airflow-common
+    image: ${AIRFLOW_IMAGE_NAME:-localhost:5000/airflow:2.3.2-01}
+    build: .
+    container_name: airflow-init
     entrypoint: /bin/bash
     # yamllint disable rule:line-length
     command:
@@ -301,32 +379,71 @@ services:
         exec /entrypoint airflow version
     # yamllint enable rule:line-length
     environment:
-      <<: *airflow-common-env
+      # <<: *airflow-common-env
+      # _AIRFLOW_DB_UPGRADE: 'true'
+      # _AIRFLOW_WWW_USER_CREATE: 'true'
+      # _AIRFLOW_WWW_USER_USERNAME: ${_AIRFLOW_WWW_USER_USERNAME:-airflow}
+      # _AIRFLOW_WWW_USER_PASSWORD: ${_AIRFLOW_WWW_USER_PASSWORD:-airflow}
+      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: mysql+pymysql://airflow:airflow@mysql:3306/airflow
+      AIRFLOW__CELERY__RESULT_BACKEND: db+mysql://airflow:airflow@mysql:3306/airflow
+      AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
+      AIRFLOW__CORE__FERNET_KEY: ''
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: 'true'
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__API__AUTH_BACKEND: 'airflow.api.auth.backend.basic_auth'
       _AIRFLOW_DB_UPGRADE: 'true'
       _AIRFLOW_WWW_USER_CREATE: 'true'
       _AIRFLOW_WWW_USER_USERNAME: ${_AIRFLOW_WWW_USER_USERNAME:-airflow}
       _AIRFLOW_WWW_USER_PASSWORD: ${_AIRFLOW_WWW_USER_PASSWORD:-airflow}
+      # (docker에 proxy 설정하여 가능하지만, 초기 올릴때만 사용하는 것이기에 비추천)
+      # _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
     user: "0:0"
     volumes:
       - .:/sources
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./repository:/opt/airflow/repository
 
-  airflow-cli:
-    <<: *airflow-common
-    profiles:
-      - debug
-    environment:
-      <<: *airflow-common-env
-      CONNECTION_CHECK_MAX_COUNT: "0"
-    # Workaround for entrypoint issue. See: https://github.com/apache/airflow/issues/16252
-    command:
-      - bash
-      - -c
-      - airflow
+  # airflow-cli:
+  #   <<: *airflow-common
+  #   profiles:
+  #     - debug
+  #   environment:
+  #     <<: *airflow-common-env
+  #     CONNECTION_CHECK_MAX_COUNT: "0"
+  #   # Workaround for entrypoint issue. See: https://github.com/apache/airflow/issues/16252
+  #   command:
+  #     - bash
+  #     - -c
+  #     - airflow
 
   flower:
-    <<: *airflow-common
+    # <<: *airflow-common
+    image: ${AIRFLOW_IMAGE_NAME:-localhost:5000/airflow:2.3.2-01}
+    build: .
     container_name: flower
     command: celery flower
+    environment:
+      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: mysql+pymysql://airflow:airflow@mysql:3306/airflow
+      AIRFLOW__CELERY__RESULT_BACKEND: db+mysql://airflow:airflow@mysql:3306/airflow
+      AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
+      AIRFLOW__CORE__FERNET_KEY: ''
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: 'true'
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__API__AUTH_BACKEND: 'airflow.api.auth.backend.basic_auth'
+      # (docker에 proxy 설정하여 가능하지만, 초기 올릴때만 사용하는 것이기에 비추천)
+      # _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./repository:/opt/airflow/repository
+    user: "${AIRFLOW_UID:-50000}:0"
     ports:
       - 5555:5555
     healthcheck:
@@ -335,10 +452,10 @@ services:
       timeout: 10s
       retries: 5
     restart: always
-    depends_on:
-      <<: *airflow-common-depends-on
-      airflow-init:
-        condition: service_completed_successfully
+    depends_on: [airflow_scheduler]
+      # <<: *airflow-common-depends-on
+      # airflow-init:
+      #   condition: service_completed_successfully
 
 volumes:
   mysql-db-volume:
