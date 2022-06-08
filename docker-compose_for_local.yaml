@@ -1,3 +1,43 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+
+# Basic Airflow cluster configuration for CeleryExecutor with Redis and PostgreSQL.
+#
+# WARNING: This configuration is for local development. Do not use it in a production deployment.
+#
+# This configuration supports basic configuration using environment variables or an .env file
+# The following variables are supported:
+#
+# AIRFLOW_IMAGE_NAME           - Docker image name used to run Airflow.
+#                                Default: apache/airflow:2.2.2
+# AIRFLOW_UID                  - User ID in Airflow containers
+#                                Default: 50000
+# Those configurations are useful mostly in case of standalone testing/running Airflow in test/try-out mode
+#
+# _AIRFLOW_WWW_USER_USERNAME   - Username for the administrator account (if requested).
+#                                Default: airflow
+# _AIRFLOW_WWW_USER_PASSWORD   - Password for the administrator account (if requested).
+#                                Default: airflow
+# _PIP_ADDITIONAL_REQUIREMENTS - Additional PIP requirements to add when starting all containers.
+#                                Default: ''
+#
+# Feel free to modify this file to suit your needs.
+---
 version: '3'
 x-airflow-common:
   &airflow-common
@@ -5,10 +45,10 @@ x-airflow-common:
   # Comment the image line, place your Dockerfile in the directory where you placed the docker-compose.yaml
   # and uncomment the "build" line below, Then run `docker-compose build` to build the images.
   # image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.2.2}
-  image: ${AIRFLOW_IMAGE_NAME:-localhost:5000/airflow:2.2.2-20211229}
+  image: ${AIRFLOW_IMAGE_NAME:-airflow:2.2.3-01}
   # build: .
   environment:
-    # &airflow-common-env
+    &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
     # AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
     # AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
@@ -29,17 +69,17 @@ x-airflow-common:
     - ./plugins:/opt/airflow/plugins
     # - ${PWD}/airflow.cfg:/opt/airflow/airflow.cfg
     - ./repository:/opt/airflow/repository
-  # command:
-  #   - pip3 install -r /opt/airflow/repository/requirements.txt
+  command:
+    - pip3 install -r /opt/airflow/repository/requirements.txt
   user: "${AIRFLOW_UID:-50000}:0"
-  # depends_on:
-  #   &airflow-common-depends-on
-  #   redis:
-  #     condition: service_healthy
-  #   # postgres:
-  #   #   condition: service_healthy
-  #   mysql:
-  #     condition: service_healthy
+  depends_on:
+    &airflow-common-depends-on
+    redis:
+      condition: service_healthy
+    # postgres:
+    #   condition: service_healthy
+    mysql:
+      condition: service_healthy
 
 services:
   # postgres:
@@ -57,7 +97,7 @@ services:
   #   restart: always
   mysql:
     container_name: mysql
-    image: localhost:5000/mysql:8.0.27
+    image: mysql:8.0.27
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: airflow
@@ -77,9 +117,9 @@ services:
 
   redis:
     container_name: redis
-    image: localhost:5000/redis:6.2.6
+    image: redis:6.2.6
     expose:
-      - 6379:6379
+      - 6379
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -88,34 +128,7 @@ services:
     restart: always
 
   airflow-webserver:
-    # <<: *airflow-common
-    image: ${AIRFLOW_IMAGE_NAME:-localhost:5000/airflow:2.2.2-20211229}
-    # build: .
-    environment:
-      # &airflow-common-env
-      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
-      # AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
-      # AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
-      AIRFLOW__CORE__SQL_ALCHEMY_CONN: mysql+pymysql://airflow:airflow@mysql:3306/airflow
-      AIRFLOW__CELERY__RESULT_BACKEND: db+mysql://airflow:airflow@mysql:3306/airflow
-      AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
-      AIRFLOW__CORE__FERNET_KEY: ''
-      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
-      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: 'true'
-      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
-      AIRFLOW__API__AUTH_BACKEND: 'airflow.api.auth.backend.basic_auth'
-      # (docker에 proxy 설정하여 가능하지만, 초기 올릴때만 사용하는 것이기에 비추천)
-      # _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
-    volumes:
-      - ./dags:/opt/airflow/dags
-      - ./logs:/opt/airflow/logs
-      # - airflowlogs:/usr/local/airflow/logs
-      - ./plugins:/opt/airflow/plugins
-      # - ${PWD}/airflow.cfg:/opt/airflow/airflow.cfg
-      - ./repository:/opt/airflow/repository
-    # command:
-    #   - pip3 install -r /opt/airflow/repository/requirements.txt
-    user: "${AIRFLOW_UID:-50000}:0"
+    <<: *airflow-common
     container_name: airflow-webserver
     command: webserver
     ports:
@@ -126,10 +139,10 @@ services:
       timeout: 10s
       retries: 5
     restart: always
-    # depends_on:
-    #   <<: *airflow-common-depends-on
-    #   airflow-init:
-    #     condition: service_completed_successfully
+    depends_on:
+      <<: *airflow-common-depends-on
+      airflow-init:
+        condition: service_completed_successfully
 
   airflow-scheduler:
     <<: *airflow-common
