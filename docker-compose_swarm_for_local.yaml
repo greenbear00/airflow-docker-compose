@@ -96,7 +96,7 @@ services:
   #   restart: always
   mysql:
     # container_name: mysql
-    image: localhost:5000/mysql:8.0.27
+    image: localhost:5000/mysql:8.0.29
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: airflow
