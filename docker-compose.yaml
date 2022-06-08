@@ -67,6 +67,8 @@ services:
       MYSQL_DATABASE: airflow
     volumes:
       - mysql-db-volume:/var/lib/mysql
+    security_opt:
+      - seccomp:unconfined
     command: # 명령어 실행
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
