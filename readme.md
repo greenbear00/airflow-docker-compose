@@ -28,7 +28,7 @@ $ docker pull apache/airflow:2.3.2
 
 # mysql로 이미지 변동으로 인한 pymysql 패키지 설치
 $ vi Dockerfile
-FROM apache/airflow:2.2.3
+FROM apache/airflow:2.3.2
 
 RUN /usr/local/bin/python -m pip install --upgrade pip  
 RUN pip3 install pymysql
@@ -79,11 +79,11 @@ CMD []
 ### 3.2 build
 ```
 # 이미지 build
-docker build -t airflow:2.2.3-01 .
+docker build -f Dockerfile_local -t airflow:2.3.2-01 .
 
 # 이미지 체크
-docker exec -it airflow:2.2.3-01 bash
-docker exec -u [root|airflow|default] -it airflow:2.2.3-01 bash
+docker run -it -u root -it --name airflow airflow:2.3.2-01 bash
+docker exec -u [root|airflow|default] -it airflow:2.3.2-01 bash
 ```
 
 
