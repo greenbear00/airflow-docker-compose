@@ -199,7 +199,7 @@ services:
 
   airflow-jupyter:
     # <<: *airflow-common
-    image: ${AIRFLOW_IMAGE_NAME:-locahost:5000/airflow:2.3.2-01}
+    image: ${AIRFLOW_IMAGE_NAME:-localhost:5000/airflow:2.3.2-01}
     build: .
     environment:
       AIRFLOW__CORE__EXECUTOR: CeleryExecutor
