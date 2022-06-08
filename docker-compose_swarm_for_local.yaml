@@ -164,7 +164,7 @@ services:
 
   airflow-scheduler:
     # <<: *airflow-common
-    images: ${AIRFLOW_IMAGE_NAME:-localhost:5000/airflow:2.3.2-01}
+    image: ${AIRFLOW_IMAGE_NAME:-localhost:5000/airflow:2.3.2-01}
     container_name: airflow-scheduler
     build: .
     environment:
