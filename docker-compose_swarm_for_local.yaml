@@ -45,7 +45,7 @@ x-airflow-common:
   # Comment the image line, place your Dockerfile in the directory where you placed the docker-compose.yaml
   # and uncomment the "build" line below, Then run `docker-compose build` to build the images.
   # image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.2.2}
-  image: ${AIRFLOW_IMAGE_NAME:-airflow:2.3.2-01}
+  image: ${AIRFLOW_IMAGE_NAME:-localhost:5000/airflow:2.3.2-01}
   # build: .
   environment:
     &airflow-common-env
@@ -96,7 +96,7 @@ services:
   #   restart: always
   mysql:
     container_name: mysql
-    image: mysql:8.0.27
+    image: localhost:5000/mysql:8.0.27
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: airflow
@@ -116,7 +116,7 @@ services:
 
   redis:
     container_name: redis
-    image: redis:6.2.6
+    image: localhost:5000/redis:6.2.6
     expose:
       - 6379
     healthcheck:
