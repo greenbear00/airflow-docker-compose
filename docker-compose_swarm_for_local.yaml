@@ -223,7 +223,7 @@ services:
       - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
       - ./repository:/opt/airflow/repository
-    user: "${AIRFLOW_UID:701}:0"
+    user: "${AIRFLOW_UID:-701}:0"
     # container_name: airflow-jupyter
     command: bash -cx "jupyter notebook --ip 0.0.0.0  --NotebookApp.token='airflow' --no-browser"
     ports:
@@ -258,7 +258,7 @@ services:
       - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
       - ./repository:/opt/airflow/repository
-    user: "${AIRFLOW_UID:701}:0"
+    user: "${AIRFLOW_UID:-701}:0"
     # container_name: airflow-worker
     command: celery worker
     healthcheck:
@@ -303,7 +303,7 @@ services:
       - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
       - ./repository:/opt/airflow/repository
-    user: "${AIRFLOW_UID:701}:0"
+    user: "${AIRFLOW_UID:-701}:0"
     healthcheck:
       test: ["CMD-SHELL", 'airflow jobs check --job-type TriggererJob --hostname "$${HOSTNAME}"']
       interval: 10s
@@ -452,7 +452,7 @@ services:
       - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
       - ./repository:/opt/airflow/repository
-    user: "${AIRFLOW_UID:701}:0"
+    user: "${AIRFLOW_UID:-701}:0"
     ports:
       - 5555:5555
     healthcheck:
