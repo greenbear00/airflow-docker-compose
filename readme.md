@@ -408,12 +408,13 @@ volumes:
 
 airflow-init을 수행 (따로 airflow-init을 안하고 바로 docker-compose up으로 해도 됨)
 ```
-# 초기 셋팅 
-$ mkdir dags logs plugins
+# 초기 셋팅 (repository는 다양한 소스 repository를 의미)
+$ mkdir dags logs plugins repository
 # 만약에 실행중에 permission error가 난다면 mount한 부분에 권한 적용
 #$ chmod -R 777 dags/
 #$ chmod -R 777 logs/
 #$ chmod -R 777 plugins/
+#$ chmod -R 777 repository/
 
 # 버전이 올라가면서 airflow_GID는 사라짐 (오류 나와도 무시하면 됨)
 #$ echo -e "AIRFLOW_UID=$(id -u)\nAIRFLOW_GID=0" > .env
@@ -429,13 +430,10 @@ airflow-cluster-test-airflow-init-1 exited with code 0
 
 airflow run
 ```
-
-
 $ docker-compose up -d
 
 # 만약 worker를 여러개 띄우고싶다면
 # docker-compose up -d --scale airflow-worker=3
-
 
 # 상태확인
 $ docker-compose ps
@@ -449,6 +447,24 @@ airflow-worker2                  "/usr/bin/dumb-init …"   airflow-worker2     
 flower                           "/usr/bin/dumb-init …"   flower              running (healthy)   0.0.0.0:5555->5555/tcp
 mysql                            "docker-entrypoint.s…"   mysql               running (healthy)   33060/tcp
 redis                            "docker-entrypoint.s…"   redis               running (healthy)   6379/tcp
+
+
+# 이때 dag에 dag를 작성하면서 repository에 있는 소스를 실행했을때 파일 생성 등의 소스가 permission error가 발생하면
+# host쪽 mount directory의 사용자와 그룹 정보를 봐야함
+# 보면 docker-compose로 마운트한 dags, logs, plugins은 greenbear:root로 되어 있기에 해당 부분 권한을 변경하면 정상 동작함
+[greenbear airflow-cluster-test]$ ls -l
+total 84
+# drwxrwxrwx 4 greenbear root        128 Jun  9 10:11 dags
+# -rw-rw-r-- 1 greenbear greenbear 10180 Jun  8 13:46 docker-compose_original.yaml
+# -rw-rw-r-- 1 greenbear greenbear 19864 Jun  8 16:50 docker-compose_swarm_for_local.yaml
+# -rw-rw-r-- 1 greenbear greenbear 20314 Jun  8 16:50 docker-compose.yaml
+# -rw-rw-r-- 1 greenbear greenbear  1691 Jun  9 11:13 Dockerfile
+# -rw-rw-r-- 1 greenbear greenbear  2043 Jun  8 15:10 Dockerfile_proxy
+# drwxrwxr-x 2 greenbear greenbear    30 Jun  8 13:30 img
+# drwxrwxrwx 6 greenbear root        117 Jun  9 10:11 logs
+# drwxrwxrwx 2 greenbear root          6 Jun  8 14:02 plugins
+# -rw-rw-r-- 1 greenbear greenbear 20724 Jun  9 11:13 readme.md
+# drwxrwxr-x 3 greenbear root         23 Jun  8 13:30 repository
 ```
 
 
