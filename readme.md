@@ -1,4 +1,6 @@
 # airflow docker-compose
+- postgresql -> mysql로 변경
+- docker-compose 및 docker swarm기반 docker-compose 추가 
 
 ## 1. docker-compose version check
 ```bash
@@ -87,8 +89,8 @@ docker exec -u [root|airflow|default] -it airflow:2.3.2-01 bash
 ```
 
 
-## 4. docker-compose
-### 4.1 docker-compose.yaml
+## 4-1. docker-compose with mssql
+### 4-1.1 docker-compose.yaml
 ```
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
@@ -402,12 +404,16 @@ volumes:
 
 ```
 
-### 4.2 docker-compose up
+### 4-1.2 docker-compose up
 
-airflow-init을 수행
+airflow-init을 수행 (따로 airflow-init을 안하고 바로 docker-compose up으로 해도 됨)
 ```
 # 초기 셋팅 
 $ mkdir dags logs plugins
+# 만약에 실행중에 permission error가 난다면 mount한 부분에 권한 적용
+#$ chmod -R 777 dags/
+#$ chmod -R 777 logs/
+#$ chmod -R 777 plugins/
 
 # 버전이 올라가면서 airflow_GID는 사라짐 (오류 나와도 무시하면 됨)
 #$ echo -e "AIRFLOW_UID=$(id -u)\nAIRFLOW_GID=0" > .env
@@ -423,7 +429,13 @@ airflow-cluster-test-airflow-init-1 exited with code 0
 
 airflow run
 ```
+
+
 $ docker-compose up -d
+
+# 만약 worker를 여러개 띄우고싶다면
+# docker-compose up -d --scale airflow-worker=3
+
 
 # 상태확인
 $ docker-compose ps
@@ -438,12 +450,6 @@ flower                           "/usr/bin/dumb-init …"   flower              
 mysql                            "docker-entrypoint.s…"   mysql               running (healthy)   33060/tcp
 redis                            "docker-entrypoint.s…"   redis               running (healthy)   6379/tcp
 ```
-
-
-
-
-
-
 
 
 ## 4-2. docker-compose with swarm
@@ -489,9 +495,42 @@ $ docker push localhost:5000/airflow:2.3.2-01
 
 ### 4-2.3 airflow docker-compose 파일 수정
 해당 버전에 image만 private docker repository로 변경해서 push 후, deploy할경우 아래와 같은 에러가 발생.
-따라서 docker-compose 파일ㅇ르 수정해줘야 함.
+따라서 docker-compose 파일을 수정해줘야 함. -> docker-compose_swarm_for_local.yaml
 
 - services.airflow-scheduler.depends_on must be a list
+
+### 4-2.3 배포 및 확인
+```
+$ sudo docker-compose -f docker-compose_swarm_for_local.yaml push
+$ sudo docker stack deploy -c docker-compose_swarm_for_local.yaml airflow
+$ sudo docker stack services airflow
+ID            NAME               MODE        REPLICAS  IMAGE
+05oafi4sjoc9  airflow_init       replicated  1/1       localhost:5000/airflow:2.3.2-01
+7hrjh2ilq7zt  airflow_scheduler  replicated  1/1       localhost:5000/airflow:2.3.2-01
+ecelkpik4ole  airflow_mysql      replicated  1/1       localhost:5000/mysql:8.0.29
+k1uv6s0gk2rv  airflow_worker     replicated  1/1       localhost:5000/airflow:2.3.2-01
+ocbow9unufro  airflow_triggerer  replicated  1/1       localhost:5000/airflow:2.3.2-01
+pqwsjn90ko2r  airflow_redis      replicated  1/1       localhost:5000/redis:6.2.6
+qu5zoi0lmasl  airflow_flower     replicated  1/1       localhost:5000/airflow:2.3.2-01
+t4x17unaiyxg  airflow_webserver  replicated  1/1       localhost:5000/airflow:2.3.2-01
+tsh4i4j66gr1  airflow_jupyter    replicated  1/1       localhost:5000/airflow:2.3.2-01
+
+# 중간에 worker만 늘리는 법
+$ sudo docker service scale airflow_worker=3
+ID            NAME               MODE        REPLICAS  IMAGE
+05oafi4sjoc9  airflow_init       replicated  1/1       localhost:5000/airflow:2.3.2-01
+7hrjh2ilq7zt  airflow_scheduler  replicated  1/1       localhost:5000/airflow:2.3.2-01
+ecelkpik4ole  airflow_mysql      replicated  1/1       localhost:5000/mysql:8.0.29
+k1uv6s0gk2rv  airflow_worker     replicated  3/3       localhost:5000/airflow:2.3.2-01
+ocbow9unufro  airflow_triggerer  replicated  1/1       localhost:5000/airflow:2.3.2-01
+pqwsjn90ko2r  airflow_redis      replicated  1/1       localhost:5000/redis:6.2.6
+qu5zoi0lmasl  airflow_flower     replicated  1/1       localhost:5000/airflow:2.3.2-01
+t4x17unaiyxg  airflow_webserver  replicated  1/1       localhost:5000/airflow:2.3.2-01
+tsh4i4j66gr1  airflow_jupyter    replicated  1/1       localhost:5000/airflow:2.3.2-01
+
+# 내리는 법
+$ sudo docker stack rm airflow
+```
 
 
 
