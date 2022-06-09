@@ -1,7 +1,7 @@
 FROM apache/airflow:2.3.2
 
 RUN /usr/local/bin/python -m pip install --upgrade pip
-RUN pip3 install pymysql
+RUN pip3 install pymysql pymssql plyvel
 RUN pip3 install plyvel
 
 ########################################################################
