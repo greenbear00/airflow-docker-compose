@@ -454,7 +454,7 @@ redis                            "docker-entrypoint.s…"   redis               
 
 ## 4-2. docker-compose with swarm
 swarm 버전으로 airflow를 docker-compose해서 올리는 방법
-### 4-2.1. private docker registry
+### 4-2.1. private docker registry for swarm
 swarm 버전으로 airflow를 올리기 위해서는 사설 docker registry가 존재해야 함.
 일반적으로 nexus를 많이 쓰나, 여기에서는 docker registry를 그대로 사용
 ```
@@ -486,7 +486,8 @@ $ curl -X GET http://localhost:5000/v2/_catalog
 {"repositories": ["centos"]}
 
 ```
-### 4-2.2 airflow 준비
+### 4-2.2 airflow 준비 
+private repository에 이미지 업로드
 ```
 $ docker build -f Dockerfile_local -t airflow:2.3.2-01 .
 $ docker image tag airflow:2.3.2-01 localhost:5000/airflow:2.3.2-01
@@ -495,7 +496,9 @@ $ docker push localhost:5000/airflow:2.3.2-01
 
 ### 4-2.3 airflow docker-compose 파일 수정
 해당 버전에 image만 private docker repository로 변경해서 push 후, deploy할경우 아래와 같은 에러가 발생.
-따라서 docker-compose 파일을 수정해줘야 함. -> docker-compose_swarm_for_local.yaml
+따라서 docker-compose 파일을 수정해줘야 함.
+
+실제 sawrm버전 파일: docker-compose_swarm_for_local.yaml
 
 - services.airflow-scheduler.depends_on must be a list
 
@@ -556,7 +559,8 @@ $ docker exec -u airflow airflow-worker2 pip3 install -r /opt/airflow/repository
 
 ## 6. jupyter
 실제 http://localhost:8888 로 접속하고 token에 'airflow'를 입력하면 접속 가능
-확인방법
+
+확인방법:
 ```
 $ docker exec -u airflow airflow-jupyter bash
 $ jupyter notebook list
