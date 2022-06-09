@@ -1,2 +1,0 @@
-{"attributes": {"name": "이호엽", "description": "", "color": "#c14d3f"}, "coreMigrationVersion": "7.13.2", "id": "3a46ed10-e2ca-11eb-b88b-1dd008f44c55", "references": [], "type": "tag", "updated_at": "2021-07-12T04:32:55.404Z"}
-{"attributes": {"color": "#6092C0", "description": "", "name": "운영"}, "coreMigrationVersion": "7.13.2", "id": "ee51ac50-27d5-11ec-b2d9-6fb9c12d3e6d", "references": [], "type": "tag", "updated_at": "2021-12-01T02:06:55.032Z"}

@@ -2,7 +2,7 @@ import os
 import sys
 from datetime import datetime, timedelta
 
-sys.path.append('/opt/airflow/repository')
+sys.path.append('/opt/airflow/repository/jnd-batch')
 for s in sys.path:
     print(s)
 
