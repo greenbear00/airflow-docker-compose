@@ -70,7 +70,7 @@ version: '3'
 #     - ./repository:/opt/airflow/repository
 #   command:
 #     - pip3 install -r /opt/airflow/repository/requirements.txt
-#   user: "${AIRFLOW_UID:701}:0"
+#   user: "${AIRFLOW_UID:-701}:0"
 #   depends_on:
 #     &airflow-common-depends-on
 #     redis:
