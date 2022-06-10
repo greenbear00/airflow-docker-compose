@@ -581,6 +581,7 @@ $ docker exec -u airflow airflow-worker2 pip3 install -r /opt/airflow/repository
 $ docker exec -u airflow airflow-jupyter bash
 $ jupyter notebook list
 
+
 ## 7. 서비스 실행에 따른 패키지 install
 
 만약 worker를 다중으로 둔다면, 서비스에 필요한 패키지는 모든 노드에 맞춰서 각각 필요 패키지를 설치해야 함.
@@ -605,4 +606,5 @@ edfff3913036        localhost:5000/mysql@sha256:0c0beeac7ca1937d60f54e1fb0c4a5c0
 # 특정 worker에 직접 들어가서 패키지 설치 (이걸 worker 모두에게 해야 함)
 $ sudo docker exec -it --user airflow airflow_worker.2.i133ct8xprbcm4yhu597ivi22 bash
 $ python -m pip install --user rootpath 
+
 ```
