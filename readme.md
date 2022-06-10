@@ -580,3 +580,29 @@ $ docker exec -u airflow airflow-worker2 pip3 install -r /opt/airflow/repository
 ```
 $ docker exec -u airflow airflow-jupyter bash
 $ jupyter notebook list
+
+## 7. 서비스 실행에 따른 패키지 install
+
+만약 worker를 다중으로 둔다면, 서비스에 필요한 패키지는 모든 노드에 맞춰서 각각 필요 패키지를 설치해야 함.
+
+```
+# 워커 names 확인하기
+$ sudo docker ps
+CONTAINER ID        IMAGE                                                                                            COMMAND                  CREATED             STATUS                    PORTS                    NAMES
+d4dc88ab6588        localhost:5000/airflow@sha256:a6b61c7cff04b88f7c4abbd7dbea4563994484f2913019ccf7dcf250271faa39   "/bin/bash -c 'fun..."   12 seconds ago      Up 6 seconds              8080/tcp                 airflow_init.1.ldfx8u4iaopksuy5c60ae7ehx
+0e5f19f4eccc        localhost:5000/airflow@sha256:a6b61c7cff04b88f7c4abbd7dbea4563994484f2913019ccf7dcf250271faa39   "/usr/bin/dumb-ini..."   36 minutes ago      Up 36 minutes (healthy)   8080/tcp                 airflow_worker.3.43r85o6makgq8p4i2kaviwk6k
+2d6e45fd71e6        localhost:5000/airflow@sha256:a6b61c7cff04b88f7c4abbd7dbea4563994484f2913019ccf7dcf250271faa39   "/usr/bin/dumb-ini..."   36 minutes ago      Up 36 minutes (healthy)   8080/tcp                 airflow_worker.2.i133ct8xprbcm4yhu597ivi22
+93fa49f54f02        localhost:5000/airflow@sha256:a6b61c7cff04b88f7c4abbd7dbea4563994484f2913019ccf7dcf250271faa39   "/usr/bin/dumb-ini..."   20 hours ago        Up 20 hours (healthy)     8080/tcp                 airflow_flower.1.rns44d5aikcgyojuzoo4izgd3
+4a3edfba14d9        localhost:5000/airflow@sha256:a6b61c7cff04b88f7c4abbd7dbea4563994484f2913019ccf7dcf250271faa39   "/usr/bin/dumb-ini..."   20 hours ago        Up 20 hours (healthy)     8080/tcp                 airflow_scheduler.1.a280ux2xc4bozrlewvkpydwa0
+0c0842fc7a25        localhost:5000/redis@sha256:563888f63149e3959860264a1202ef9a644f44ed6c24d5c7392f9e2262bd3553     "docker-entrypoint..."   20 hours ago        Up 20 hours (healthy)     6379/tcp                 airflow_redis.1.lttppjvuz3rco1a2xd4iomfmy
+1bae36367ad2        localhost:5000/airflow@sha256:a6b61c7cff04b88f7c4abbd7dbea4563994484f2913019ccf7dcf250271faa39   "/usr/bin/dumb-ini..."   20 hours ago        Up 20 hours               8080/tcp                 airflow_jupyter.1.4026izt3qjlop6reazhfi7asz
+43c4ff9e954d        localhost:5000/airflow@sha256:a6b61c7cff04b88f7c4abbd7dbea4563994484f2913019ccf7dcf250271faa39   "/usr/bin/dumb-ini..."   20 hours ago        Up 20 hours (healthy)     8080/tcp                 airflow_triggerer.1.ia2veslnmrx9nswhu9jf76xbv
+6cc43bac80c2        localhost:5000/airflow@sha256:a6b61c7cff04b88f7c4abbd7dbea4563994484f2913019ccf7dcf250271faa39   "/usr/bin/dumb-ini..."   20 hours ago        Up 20 hours (healthy)     8080/tcp                 airflow_webserver.1.4cqoz1n66mxnvsx1muzlotgyr
+babecac65fca        localhost:5000/airflow@sha256:a6b61c7cff04b88f7c4abbd7dbea4563994484f2913019ccf7dcf250271faa39   "/usr/bin/dumb-ini..."   20 hours ago        Up 20 hours (healthy)     8080/tcp                 airflow_worker.1.tdjxpkjvvp5tpyzezcbsfw623
+edfff3913036        localhost:5000/mysql@sha256:0c0beeac7ca1937d60f54e1fb0c4a5c0b0ffee2aae37488fbc9f5ea301425551     "docker-entrypoint..."   20 hours ago        Up 20 hours (healthy)     3306/tcp, 33060/tcp      airflow_mysql.1.vh67eigpb1r9tc4ftyqlqv6xn
+3b8e943ae841        registry                                                                                         "/entrypoint.sh /e..."   43 hours ago        Up 43 hours               0.0.0.0:5000->5000/tcp   registry
+
+# 특정 worker에 직접 들어가서 패키지 설치 (이걸 worker 모두에게 해야 함)
+$ sudo docker exec -it --user airflow airflow_worker.2.i133ct8xprbcm4yhu597ivi22 bash
+$ python -m pip install --user rootpath 
+```
