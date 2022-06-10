@@ -580,6 +580,7 @@ $ docker exec -u airflow airflow-worker2 pip3 install -r /opt/airflow/repository
 ```
 $ docker exec -u airflow airflow-jupyter bash
 $ jupyter notebook list
+```
 
 
 ## 7. 서비스 실행에 따른 패키지 install
@@ -602,6 +603,7 @@ d4dc88ab6588        localhost:5000/airflow@sha256:a6b61c7cff04b88f7c4abbd7dbea45
 babecac65fca        localhost:5000/airflow@sha256:a6b61c7cff04b88f7c4abbd7dbea4563994484f2913019ccf7dcf250271faa39   "/usr/bin/dumb-ini..."   20 hours ago        Up 20 hours (healthy)     8080/tcp                 airflow_worker.1.tdjxpkjvvp5tpyzezcbsfw623
 edfff3913036        localhost:5000/mysql@sha256:0c0beeac7ca1937d60f54e1fb0c4a5c0b0ffee2aae37488fbc9f5ea301425551     "docker-entrypoint..."   20 hours ago        Up 20 hours (healthy)     3306/tcp, 33060/tcp      airflow_mysql.1.vh67eigpb1r9tc4ftyqlqv6xn
 3b8e943ae841        registry                                                                                         "/entrypoint.sh /e..."   43 hours ago        Up 43 hours               0.0.0.0:5000->5000/tcp   registry
+
 
 # 특정 worker에 직접 들어가서 패키지 설치 (이걸 worker 모두에게 해야 함)
 $ sudo docker exec -it --user airflow airflow_worker.2.i133ct8xprbcm4yhu597ivi22 bash
