@@ -213,6 +213,8 @@ $ jupyter notebook list
 
 ## 7. 서비스 실행에 따른 패키지 install
 
+### 7.1 docker container에서 직접 설치
+
 만약 worker를 다중으로 둔다면, 서비스에 필요한 패키지는 모든 노드에 맞춰서 각각 필요 패키지를 설치해야 함.
 
 ```
@@ -238,6 +240,8 @@ $ sudo docker exec -it --user airflow airflow_worker.2.i133ct8xprbcm4yhu597ivi22
 $ python -m pip install --user rootpath 
 
 ```
+
+### 7.2 python site-packages를 맵핑
 
 또는 호스트 터미널에서 아래와 같이 하면, airflow 컨테이너에 따로 패키지 설치 없이 바로 사용 가능함.
 관련하여 추가한 사항
