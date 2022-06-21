@@ -610,3 +610,18 @@ $ sudo docker exec -it --user airflow airflow_worker.2.i133ct8xprbcm4yhu597ivi22
 $ python -m pip install --user rootpath 
 
 ```
+
+또는 호스트 터미널에서 아래와 같이 하면, airflow 컨테이너에 따로 패키지 설치 없이 바로 사용 가능함.
+관련하여 추가한 사항
+- Dockerfile 내용 추가
+```
+COPY ./packages.pth /home/airflow/.local/lib/python3.7/site-packages
+RUN sudo chmod -R o+rwx /home/airflow/.local/lib/python3.7/site-packages
+```
+- ./packages 디렉토리 생성
+   - /opt/airflow/packages
+- packages.pth 파일 추가
+
+```
+$ pip3 install --target=./packages python-dateutil
+```
