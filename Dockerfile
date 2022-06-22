@@ -19,6 +19,7 @@ RUN adduser airflow sudo
 RUN echo 'airflow ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/airflow
 # RUN adduser ${AIRFLOW_UID} sudo
 RUN echo 'default ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/default
+#RUN sudo usermod -e "" default
 # password 없이 su 명령어 가능
 RUN sed -i 's/# auth       sufficient pam_wheel.so trus/ auth       sufficient pam_wheel.so trus/g' /etc/pam.d/su
 
