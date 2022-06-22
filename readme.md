@@ -257,3 +257,11 @@ RUN sudo chmod -R o+rwx /home/airflow/.local/lib/python3.7/site-packages
 ```
 $ pip3 install --target=./packages python-dateutil
 ```
+
+## 8. worker에 sudo 권한
+
+worker에서 bashoperator로 sudo 권한이 필요한 작업을 해야 할 경우
+worker 컨테이너에서 아래 명령어를 수행해야 함
+```
+usermod -e "" default
+```
