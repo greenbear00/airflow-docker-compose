@@ -23,6 +23,17 @@ RUN echo 'default ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/default
 # password 없이 su 명령어 가능
 RUN sed -i 's/# auth       sufficient pam_wheel.so trus/ auth       sufficient pam_wheel.so trus/g' /etc/pam.d/su
 
+# 전체 사용자에게 vim 관련하여 한글 깨짐 현상 제거
+RUN echo 'set encoding=utf-8' >> /etc/vim/vimrc
+RUN echo 'set fileencodings=utf-8,cp949' >> /etc/vim/vimrc
+
+# timezone을 asia/seoul로 변경
+RUN sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+
+# -rwxrwxr-x   1 root root 11062 Jun 17 11:23 entrypoint
+COPY ./entrypoint /entrypoint
+RUN chmod 775 /entrypoint
+
 
 ########################################################################
 # by airflow user
@@ -34,7 +45,7 @@ USER airflow
 # 참고: https://xnuinside.medium.com/install-python-dependencies-to-docker-compose-cluster-without-re-build-images-8c63a431e11c
 RUN mkdir /opt/airflow/packages
 COPY ./packages.pth /home/airflow/.local/lib/python3.7/site-packages
-RUN sudo chmod -R o+rwx /home/airflow/.local/lib/python3.7/site-packages
+RUN sudo chmod -R o+rw /home/airflow/.local/lib/python3.7/site-packages
 
 RUN pip3 install -U jupyter-core 
 RUN pip3 install -U jupyter 

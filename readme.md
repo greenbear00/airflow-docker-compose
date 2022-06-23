@@ -262,6 +262,9 @@ $ pip3 install --target=./packages python-dateutil
 
 worker에서 bashoperator로 sudo 권한이 필요한 작업을 해야 할 경우
 worker 컨테이너에서 아래 명령어를 수행해야 함
-```
+`
 usermod -e "" default
-```
+`
+
+다만, 이를 위해 airflow entrypoint 파일을 수정함.
+worker가 default user로 셋팅될때, 바로 sudo 권한 적용
